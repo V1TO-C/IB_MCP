@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  ib_client:
+    container_name: ib_client_service
+    build:
+      context: ./ib_client_service
+      dockerfile: Dockerfile
+    ports:
+      # Map host port 5001 to container port 5001
+      - "5001:5001"
+    env_file:
+      # Load environment variables from .env file in the project root
+      - .env
+    # Optional: Add volumes if needed for persistent data or code mounting during dev
+    # volumes:
+    #   - ./ib_client_service/src:/app/src
+    restart: unless-stopped # Or 'always' or 'on-failure'
+
+# Note: Networks might be needed later when adding the mcp_server
+# networks:
+#   mcp_net:
+#     driver: bridge
