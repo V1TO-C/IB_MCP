@@ -1,23 +1,70 @@
-version: '3.8'
-
 services:
-  ib_client:
-    container_name: ib_client_service
+  api_gateway:
+    container_name: api_gateway
     build:
-      context: ./ib_client_service
+      context: ./api_gateway
       dockerfile: Dockerfile
     ports:
-      # Map host port 5001 to container port 5001
-      - "5001:5001"
+      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
     env_file:
-      # Load environment variables from .env file in the project root
       - .env
-    # Optional: Add volumes if needed for persistent data or code mounting during dev
+    networks:
+      - mcp_net
+    volumes:
+      - ./api_gateway/conf.yaml:/app/api_gateway/root/conf.yaml # Mount the config file
+  tickler:
+    image: alpine:3.20
+    container_name: api_tickler
+    depends_on:
+      - api_gateway
+    networks:
+      - mcp_net
+    env_file:
+      - .env
+    environment:
+      TICKLE_INTERVAL: ${TICKLE_INTERVAL}
+      TICKLE_BASE_URL: ${TICKLE_BASE_URL}
+      TICKLE_ENDPOINT: ${TICKLE_ENDPOINT}
+    command: >
+      /bin/sh -c "
+        apk add --no-cache curl > /dev/null &&
+        echo '[tickler] Started.' &&
+        while true; do
+          NOW=\\$(date)
+          echo \"[tickler] \$NOW: Sending tickle to \$TICKLE_BASE_URL\$TICKLE_ENDPOINT\" ;
+          curl -sk -X POST \"\$TICKLE_BASE_URL\$TICKLE_ENDPOINT\" -H 'Content-Type: application/json' -d '{}' -w \" HTTP status: %{http_code}\n\" ;
+          sleep \$TICKLE_INTERVAL ;
+        done
+      "
+  mcp_server:
+    container_name: mcp_server
+    build:
+      context: ./mcp_server
+      dockerfile: Dockerfile
+    ports:
+      - "${MCP_SERVER_PORT}:${MCP_SERVER_PORT}"
+    env_file:
+      - .env
+    environment:
+      GATEWAY_BASE_URL: ${GATEWAY_INTERNAL_BASE_URL}
+      GATEWAY_PORT: ${GATEWAY_PORT}
+      GATEWAY_ENDPOINT: ${GATEWAY_ENDPOINT}
+      MCP_SERVER_PORT: ${MCP_SERVER_PORT}
+      MCP_TRANSPORT_PROTOCOL: ${MCP_TRANSPORT_PROTOCOL}
+    depends_on:
+      - api_gateway
+      - tickler
+    networks:
+      - mcp_net
     # volumes:
-    #   - ./ib_client_service/src:/app/src
-    restart: unless-stopped # Or 'always' or 'on-failure'
+    #   # Mount local directory for development
+    #   - .:/app
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
 
-# Note: Networks might be needed later when adding the mcp_server
-# networks:
-#   mcp_net:
-#     driver: bridge
+networks:
+  mcp_net:
+    driver: bridge
+
+
