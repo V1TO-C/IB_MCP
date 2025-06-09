@@ -28,16 +28,21 @@ This Docker container sets up and runs the **Interactive Brokers (IB) Client Por
 - **Configuration**:
   - Copies a custom `conf.yaml` into the expected path (`gateway/root/conf.yaml`) to configure the gateway.
   - Adds a custom `run_gateway.sh` script as the container entrypoint.
-- **Port Exposure**: Exposes port `5055` (default port used by the gateway).
+- **Port Exposure**: Exposes port `5055` (default port used by the gateway). Override as needed in .env.
 - **Startup Command**: Runs the gateway using the configuration file.
 
 This setup provides a self-contained, reproducible environment for securely running the Interactive Brokers REST API gateway in a containerized environment.
 
 
+###  📦  IB MCP Server Docker Container (WIP)
+
+
+
 ## Setup
+0. Copy this .env.example file to .env and fill in your actual values
 1. Build the image with: `docker compose up --build -d`
 2. Auth with your IB account and credentials to:
-    After the image is up and running, navigate to https://{GATEWAY_BASE_URL}:{GATEWAY_PORT}⁠ (e.g.: https://localhost:5058/) to login.
+    After the image is up and running, navigate to https://{GATEWAY_BASE_URL}:{GATEWAY_PORT}⁠ (e.g.: https://localhost:9999/) to login.
     If succesful you should be redirected to a url that reads: "Client login succeeds" 
 
 
@@ -104,7 +109,8 @@ If the brokerage session has timed out but the session is still connected to the
 
 # Future Work
 
-- [ ] Test correct functioning. 
+- [ ] Test MCP server functionality.
+- [ ] Test MCP server with LLM. 
 
 # References
 - [IB WEB API Docker implementation](https://github.com/hackingthemarkets/interactive-brokers-web-api)
