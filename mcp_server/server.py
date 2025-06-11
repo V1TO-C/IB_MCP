@@ -18,11 +18,28 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 GATEWAY_BASE_URL = os.environ.get("GATEWAY_BASE_URL")
 GATEWAY_PORT = os.environ.get("GATEWAY_PORT")
 GATEWAY_ENDPOINT = os.environ.get("GATEWAY_ENDPOINT")
+MCP_SERVER_BASE_URL = os.environ.get("MCP_SERVER_BASE_URL")
+MCP_SERVER_INTERNAL_BASE_URL = os.environ.get("MCP_SERVER_INTERNAL_BASE_URL")
+MCP_SERVER_HOST = os.environ.get("MCP_SERVER_HOST")
+MCP_TRANSPORT_PROTOCOL = os.environ.get("MCP_TRANSPORT_PROTOCOL")
+MCP_SERVER_PORT = os.environ.get("MCP_SERVER_PORT")
+
+
 IB_OPEN_API_SPECIFICATION_URL = "https://api.ibkr.com/gw/api/v3/api-docs"
 
 # Validate environment variables
 if not GATEWAY_BASE_URL or not GATEWAY_PORT or not GATEWAY_ENDPOINT:
     print("Error: One or more required environment variables are not set.")
+    sys.exit(1)
+
+# Add validation and type conversion for MCP_SERVER_PORT
+if not MCP_SERVER_PORT:
+    print("Error: MCP_SERVER_PORT environment variable is not set.")
+    sys.exit(1)
+try:
+    MCP_SERVER_PORT = int(MCP_SERVER_PORT)
+except ValueError:
+    print("Error: MCP_SERVER_PORT must be a valid integer.")
     sys.exit(1)
 
 BASE_API_URL = f"{GATEWAY_BASE_URL}:{GATEWAY_PORT}{GATEWAY_ENDPOINT}"
@@ -68,9 +85,13 @@ mcp = FastMCP.from_openapi(
     openapi_spec=openapi_spec,
     client=client,
     name="IB MCP Server",
-    version="1.0.0",
     route_maps=route_maps,
 )
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(
+        transport=MCP_TRANSPORT_PROTOCOL,
+        host=MCP_SERVER_HOST,           # Bind to all interfaces
+        port=MCP_SERVER_PORT,                # Custom port
+        log_level="DEBUG",        # Override global log level
+    )

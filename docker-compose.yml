@@ -62,8 +62,11 @@ services:
       GATEWAY_BASE_URL: ${GATEWAY_INTERNAL_BASE_URL}
       GATEWAY_PORT: ${GATEWAY_PORT}
       GATEWAY_ENDPOINT: ${GATEWAY_ENDPOINT}
+      MCP_SERVER_HOST: ${MCP_SERVER_HOST}
       MCP_SERVER_PORT: ${MCP_SERVER_PORT}
       MCP_TRANSPORT_PROTOCOL: ${MCP_TRANSPORT_PROTOCOL}
+      MCP_SERVER_BASE_URL: ${MCP_SERVER_INTERNAL_BASE_URL}
+      MCP_SERVER_LOG_LEVEL: ${MCP_SERVER_LOG_LEVEL}
     depends_on:
       api_gateway:
         condition: service_started
@@ -71,9 +74,9 @@ services:
         condition: service_healthy
     networks:
       - mcp_net
-    # volumes:
-    #   # Mount local directory for development
-    #   - .:/app
+    volumes:
+      # Mount local directory for development
+      - ./mcp_server:/app
     stdin_open: true
     tty: true
     restart: unless-stopped

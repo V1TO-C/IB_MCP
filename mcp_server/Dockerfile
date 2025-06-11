@@ -29,6 +29,10 @@ ENV GATEWAY_BASE_URL=""
 ENV GATEWAY_PORT=""
 ENV GATEWAY_ENDPOINT=""
 ENV MCP_SERVER_PORT=""
+ENV MCP_SERVER_HOST=""
+ENV MCP_TRANSPORT_PROTOCOL=""
+ENV MCP_SERVER_BASE_URL=""
+ENV MCP_SERVER_INTERNAL_BASE_URL=""
 
 # Expose the port (if needed for health checks)
 EXPOSE ${MCP_SERVER_PORT}
@@ -38,4 +42,4 @@ EXPOSE ${MCP_SERVER_PORT}
 
 CMD ["uv", "run", "--", "python", "/app/server.py"]
 
-CMD ["uv", "run", "--", "python", "/app/testing_client.py"]
+# CMD ["uv", "run", "--", "python", "/app/testing_client.py"]
