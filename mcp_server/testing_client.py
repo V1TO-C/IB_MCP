@@ -15,6 +15,12 @@ async def main():
         if any(tool.name == "greet" for tool in tools):
             result = await client.call_tool("greet", {"name": "World"})
             print(f"Greet result: {result}")
+            
+        # GET /portfolio/accounts
+        # # async def call_tool(name: str):
+        # async with client:
+        #     result = await client.call_tool("greet", {"name": name})
+        #     print(result)
 
     # Connection is closed automatically here
     print(f"Client connected: {client.is_connected()}")

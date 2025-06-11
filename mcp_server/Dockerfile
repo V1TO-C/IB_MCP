@@ -13,7 +13,7 @@ COPY pyproject.toml ./
 
 # Copy the server code
 COPY server.py .
-COPY client.py .
+COPY testing_client.py .
 
 # Debug: List files to verify server.py is copied
 RUN ls -la /app/
@@ -37,3 +37,5 @@ EXPOSE ${MCP_SERVER_PORT}
 # CMD ["uv", "run", "--", "python", "server.py"]
 
 CMD ["uv", "run", "--", "python", "/app/server.py"]
+
+CMD ["uv", "run", "--", "python", "/app/testing_client.py"]

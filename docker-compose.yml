@@ -8,15 +8,32 @@ services:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
     env_file:
       - .env
+    environment:
+      - GATEWAY_INTERNAL_BASE_URL=${GATEWAY_INTERNAL_BASE_URL}
+      - GATEWAY_PORT=${GATEWAY_PORT}
+      - GATEWAY_ENDPOINT=${GATEWAY_ENDPOINT}
+      - GATEWAY_TEST_ENDPOINT=${GATEWAY_TEST_ENDPOINT}
     networks:
       - mcp_net
     volumes:
       - ./api_gateway/conf.yaml:/app/api_gateway/root/conf.yaml # Mount the config file
+    healthcheck:
+      # Dedicated healthcheck script for cleaner logic and better environment variable handling.
+      # The script is copied into the container image via the Dockerfile.
+      test: [ "CMD-SHELL", "/usr/local/bin/healthcheck.sh" ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
   tickler:
-    image: alpine:3.20
+    build:
+      context: ./tickler
+      dockerfile: Dockerfile
     container_name: api_tickler
     depends_on:
-      - api_gateway
+      api_gateway:
+        condition: service_healthy
     networks:
       - mcp_net
     env_file:
@@ -25,17 +42,13 @@ services:
       TICKLE_INTERVAL: ${TICKLE_INTERVAL}
       TICKLE_BASE_URL: ${TICKLE_BASE_URL}
       TICKLE_ENDPOINT: ${TICKLE_ENDPOINT}
-    command: >
-      /bin/sh -c "
-        apk add --no-cache curl > /dev/null &&
-        echo '[tickler] Started.' &&
-        while true; do
-          NOW=\\$(date)
-          echo \"[tickler] \$NOW: Sending tickle to \$TICKLE_BASE_URL\$TICKLE_ENDPOINT\" ;
-          curl -sk -X POST \"\$TICKLE_BASE_URL\$TICKLE_ENDPOINT\" -H 'Content-Type: application/json' -d '{}' -w \" HTTP status: %{http_code}\n\" ;
-          sleep \$TICKLE_INTERVAL ;
-        done
-      "
+    healthcheck:
+      # The script is copied into the container image via the Dockerfile.
+      test: [ "CMD-SHELL", "/usr/local/bin/healthcheck.sh" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   mcp_server:
     container_name: mcp_server
     build:
@@ -52,8 +65,10 @@ services:
       MCP_SERVER_PORT: ${MCP_SERVER_PORT}
       MCP_TRANSPORT_PROTOCOL: ${MCP_TRANSPORT_PROTOCOL}
     depends_on:
-      - api_gateway
-      - tickler
+      api_gateway:
+        condition: service_started
+      tickler:
+        condition: service_healthy
     networks:
       - mcp_net
     # volumes:
@@ -66,5 +81,3 @@ services:
 networks:
   mcp_net:
     driver: bridge
-
-

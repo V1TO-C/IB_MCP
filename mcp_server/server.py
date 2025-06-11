@@ -5,7 +5,7 @@ import os
 import sys
 from fastmcp import FastMCP
 from fastmcp.server.openapi import RouteMap
-# from fastmcp.server.openapi import RouteMap, MCPType
+from fastmcp.server.openapi import RouteMap, MCPType
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -55,12 +55,12 @@ openapi_spec["servers"] = [
 ]
 
 
-# # TODO: Add with version 2.5
-# # Exclude some routes like those of order execution
-# route_maps=[
-#     RouteMap(pattern=r"^/orders*", mcp_type=MCPType.EXCLUDE),
-#     RouteMap(tags={"Trading Orders"}, mcp_type=MCPType.EXCLUDE),
-# ]
+
+# Exclude some routes like those of order execution
+route_maps=[
+    RouteMap(pattern=r"^/orders*", mcp_type=MCPType.EXCLUDE),
+    RouteMap(tags={"Trading Orders"}, mcp_type=MCPType.EXCLUDE),
+]
 
 
 # Create the MCP server
@@ -69,7 +69,7 @@ mcp = FastMCP.from_openapi(
     client=client,
     name="IB MCP Server",
     version="1.0.0",
-    # route_maps=route_maps,
+    route_maps=route_maps,
 )
 
 if __name__ == "__main__":

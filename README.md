@@ -7,6 +7,8 @@ This repository is actively being developed and may not be fully functional at t
 
 This project provides an Interactive Brokers (IB) API interface using the Model Context Protocol (MCP). There are several ways to interact with Interactive Brokers, like the TWS API, the WEB API, Excel RTD and FIX among others. This project is build on top of Interactive Brokers WEP API.
 
+IB offers two types of Authentication to their WebAPI, one for retail and individual clients and one for instritutional and third party developers. This development uses the retail authentification process which is managed using the Client Portal Gateway, a small java program used to route local web requests with appropriate authentication. 
+
 ## Architecture
 
 The project consists of 3 main components:
@@ -99,7 +101,7 @@ This setup provides a self-contained, reproducible environment for securely runn
 
 ### Reopen session:
 
-The additional /iserver/auth/ssodh/init endpoint is used to subsequently reopen a brokerage session with our backend, through which you can access the protected /iserver endpoints.
+The additional /iserver/auth/ssodh/init endpoint is used to subsequently reopen a brokerage session with the backend, through which you can access the protected /iserver endpoints.
 
 Sessions will time out after approximately 6 minutes without sending new requests or maintaining the /tickle endpoint at least every 5 minutes.
 
@@ -114,8 +116,11 @@ If the brokerage session has timed out but the session is still connected to the
 
 # References
 - [IB WEB API Docker implementation](https://github.com/hackingthemarkets/interactive-brokers-web-api)
+  
 - [FAST MCP](https://github.com/jlowin/fastmcp)
+- [FAST MCP Documentation](https://gofastmcp.com/servers/fastmcp)
+- [FAST MCP openapi integration](https://gofastmcp.com/servers/openapi) 
 - [IB WEB API Reference](https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-ref/)
 - [IB WEB API openapi docs](https://api.ibkr.com/gw/api/v3/api-docs)
-- [FAST MCP openapi integration](https://gofastmcp.com/servers/openapi) 
+
 - [ibeam](https://github.com/Voyz/ibeam): Facilitates continuous headless run of the Gateway. Not so secure - "Yupp, you'll need to store the credentials somewhere, and that's a risk. Read more about it in Security."- 

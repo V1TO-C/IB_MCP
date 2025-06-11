@@ -20,6 +20,10 @@ COPY conf.yaml gateway/root/conf.yaml
 COPY run_gateway.sh /app/run_gateway.sh
 RUN chmod +x /app/run_gateway.sh
 
+# Copy the healthcheck script and make it executable
+COPY healthcheck.sh /usr/local/bin/healthcheck.sh
+RUN chmod +x /usr/local/bin/healthcheck.sh
+
 # By default, the gateway will listen on port 5000
 EXPOSE 5055
 
