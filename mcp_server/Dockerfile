@@ -12,21 +12,18 @@ RUN apt-get update && apt-get install -y \
 COPY pyproject.toml ./
 
 # Copy the server code
-COPY server.py .
-COPY fastapi_server.py .
-COPY testing_client.py .
+# Copy the entire mcp_server directory
+COPY . /app/mcp_server
 
 # Debug: List files to verify server.py is copied
-RUN ls -la /app/
+RUN ls -la /app/mcp_server/
 
-# 
+# Set PYTHONPATH to include the /app directory
+ENV PYTHONPATH=/app
+
 ENV UV_CACHE_DIR=/tmp/uv-cache
 
-#
 RUN uv sync
-
-# # Make the server executable
-# RUN chmod +x server.py
 
 # Environment variables (can be overridden at runtime)
 ENV GATEWAY_BASE_URL=""
@@ -42,9 +39,5 @@ ENV MCP_SERVER_INTERNAL_BASE_URL=""
 # Expose the port (if needed for health checks)
 EXPOSE ${MCP_SERVER_PORT}
 
-# # Run the server with uv (specify python explicitly)
-# CMD ["uv", "run", "--", "python", "server.py"]
-
-CMD ["uv", "run", "--", "python", "/app/fastapi_server.py"]
-
-# CMD ["uv", "run", "--", "python", "/app/testing_client.py"]
+# Run the server with uv (specify python explicitly)
+CMD ["uv", "run", "--", "python", "/app/mcp_server/fastapi_server.py"]
