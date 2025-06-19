@@ -109,6 +109,33 @@ In order to prevent the session from timing out, the endpoint /tickle should be 
 
 If the brokerage session has timed out but the session is still connected to the IBKR backend, the response to /auth/status returns ‘connected’:true and ‘authenticated’:false. Calling the /iserver/auth/ssodh/init endpoint will initialize a new brokerage session.
 
+# VS Code Config file
+Given the following enviroment parameters
+```.env
+MCP_SERVER_HOST=0.0.0.0
+MCP_SERVER_PORT=5008
+MCP_SERVER_PATH=/mcp
+MCP_TRANSPORT_PROTOCOL=streamable-http
+```
+
+the vs code mcp server snipper would look like:
+
+```json
+"ib-mcp-server": {
+    "type": "http",
+    "url": "http://localhost:5008/mcp/",
+}
+```
+
+
+# Priority
+
+"Failed to validate tool mcp_ib-web_Account_Performance: Error: tool parameters array type must have items. Please open a Github issue for the MCP server or extension which provides this tool."
+
+- [ ] Replace the API scrapping with a simple tool
+- [ ] Be able to check the automatic tools generation
+
+
 # Future Work
 
 - [ ] Test MCP server functionality.

@@ -13,10 +13,14 @@ COPY pyproject.toml ./
 
 # Copy the server code
 COPY server.py .
+COPY fastapi_server.py .
 COPY testing_client.py .
 
 # Debug: List files to verify server.py is copied
 RUN ls -la /app/
+
+# 
+ENV UV_CACHE_DIR=/tmp/uv-cache
 
 #
 RUN uv sync
@@ -28,6 +32,7 @@ RUN uv sync
 ENV GATEWAY_BASE_URL=""
 ENV GATEWAY_PORT=""
 ENV GATEWAY_ENDPOINT=""
+ENV GATEWAY_TEST_ENDPOINT=""
 ENV MCP_SERVER_PORT=""
 ENV MCP_SERVER_HOST=""
 ENV MCP_TRANSPORT_PROTOCOL=""
@@ -40,6 +45,6 @@ EXPOSE ${MCP_SERVER_PORT}
 # # Run the server with uv (specify python explicitly)
 # CMD ["uv", "run", "--", "python", "server.py"]
 
-CMD ["uv", "run", "--", "python", "/app/server.py"]
+CMD ["uv", "run", "--", "python", "/app/fastapi_server.py"]
 
 # CMD ["uv", "run", "--", "python", "/app/testing_client.py"]

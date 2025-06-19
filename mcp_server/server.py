@@ -6,6 +6,7 @@ import sys
 from fastmcp import FastMCP
 from fastmcp.server.openapi import RouteMap
 from fastmcp.server.openapi import RouteMap, MCPType
+import aiohttp
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,6 +19,10 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 GATEWAY_BASE_URL = os.environ.get("GATEWAY_BASE_URL")
 GATEWAY_PORT = os.environ.get("GATEWAY_PORT")
 GATEWAY_ENDPOINT = os.environ.get("GATEWAY_ENDPOINT")
+GATEWAY_INTERNAL_BASE_URL = os.environ.get("GATEWAY_INTERNAL_BASE_URL")
+GATEWAY_TEST_ENDPOINT = os.environ.get("GATEWAY_TEST_ENDPOINT")
+
+
 MCP_SERVER_BASE_URL = os.environ.get("MCP_SERVER_BASE_URL")
 MCP_SERVER_INTERNAL_BASE_URL = os.environ.get("MCP_SERVER_INTERNAL_BASE_URL")
 MCP_SERVER_HOST = os.environ.get("MCP_SERVER_HOST")
@@ -77,16 +82,36 @@ openapi_spec["servers"] = [
 route_maps=[
     RouteMap(pattern=r"^/orders*", mcp_type=MCPType.EXCLUDE),
     RouteMap(tags={"Trading Orders"}, mcp_type=MCPType.EXCLUDE),
+    RouteMap(pattern=r"^/pa/performance*", mcp_type=MCPType.EXCLUDE),
+    RouteMap(pattern=r"^/pa/allperiods*", mcp_type=MCPType.EXCLUDE),
 ]
 
 
-# Create the MCP server
-mcp = FastMCP.from_openapi(
-    openapi_spec=openapi_spec,
-    client=client,
-    name="IB MCP Server",
-    route_maps=route_maps,
-)
+# # Create the MCP server
+# mcp = FastMCP.from_openapi(
+#     openapi_spec=openapi_spec,
+#     client=client,
+#     name="IB MCP Server",
+#     route_maps=route_maps,
+# )
+
+mcp = FastMCP(name="ib-web-server")
+TEST_API_URL = f"{GATEWAY_INTERNAL_BASE_URL}:{GATEWAY_PORT}{GATEWAY_TEST_ENDPOINT}"
+
+
+@mcp.tool
+async def get_orders()->dict:
+    """Retrieve current orders"""
+    async with aiohttp.ClientSession() as session:
+        async with session.get(TEST_API_URL) as response:
+            # Check response status before returning
+            response.raise_for_status()
+            return await response.json()
+    
+
+
+
+# print("MCP_SERVER_HOST", MCP_SERVER_HOST)
 
 if __name__ == "__main__":
     mcp.run(

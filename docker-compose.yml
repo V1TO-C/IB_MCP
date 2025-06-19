@@ -9,10 +9,11 @@ services:
     env_file:
       - .env
     environment:
-      - GATEWAY_INTERNAL_BASE_URL=${GATEWAY_INTERNAL_BASE_URL}
-      - GATEWAY_PORT=${GATEWAY_PORT}
-      - GATEWAY_ENDPOINT=${GATEWAY_ENDPOINT}
-      - GATEWAY_TEST_ENDPOINT=${GATEWAY_TEST_ENDPOINT}
+      - XX:XX
+      # - GATEWAY_INTERNAL_BASE_URL=${GATEWAY_INTERNAL_BASE_URL}
+      # - GATEWAY_PORT=${GATEWAY_PORT}
+      # - GATEWAY_ENDPOINT=${GATEWAY_ENDPOINT}
+      # - GATEWAY_TEST_ENDPOINT=${GATEWAY_TEST_ENDPOINT}
     networks:
       - mcp_net
     volumes:
@@ -39,9 +40,10 @@ services:
     env_file:
       - .env
     environment:
-      TICKLE_INTERVAL: ${TICKLE_INTERVAL}
-      TICKLE_BASE_URL: ${TICKLE_BASE_URL}
-      TICKLE_ENDPOINT: ${TICKLE_ENDPOINT}
+      - XX:XX
+      # TICKLE_INTERVAL: ${TICKLE_INTERVAL}
+      # TICKLE_BASE_URL: ${TICKLE_BASE_URL}
+      # TICKLE_ENDPOINT: ${TICKLE_ENDPOINT}
     healthcheck:
       # The script is copied into the container image via the Dockerfile.
       test: [ "CMD-SHELL", "/usr/local/bin/healthcheck.sh" ]
@@ -59,14 +61,15 @@ services:
     env_file:
       - .env
     environment:
-      GATEWAY_BASE_URL: ${GATEWAY_INTERNAL_BASE_URL}
-      GATEWAY_PORT: ${GATEWAY_PORT}
-      GATEWAY_ENDPOINT: ${GATEWAY_ENDPOINT}
-      MCP_SERVER_HOST: ${MCP_SERVER_HOST}
-      MCP_SERVER_PORT: ${MCP_SERVER_PORT}
-      MCP_TRANSPORT_PROTOCOL: ${MCP_TRANSPORT_PROTOCOL}
-      MCP_SERVER_BASE_URL: ${MCP_SERVER_INTERNAL_BASE_URL}
-      MCP_SERVER_LOG_LEVEL: ${MCP_SERVER_LOG_LEVEL}
+      - XX:XX
+      # GATEWAY_BASE_URL: ${GATEWAY_INTERNAL_BASE_URL}
+      # GATEWAY_PORT: ${GATEWAY_PORT}
+      # GATEWAY_ENDPOINT: ${GATEWAY_ENDPOINT}
+      # MCP_SERVER_HOST: ${MCP_SERVER_HOST}
+      # MCP_SERVER_PORT: ${MCP_SERVER_PORT}
+      # MCP_TRANSPORT_PROTOCOL: ${MCP_TRANSPORT_PROTOCOL}
+      # MCP_SERVER_BASE_URL: ${MCP_SERVER_INTERNAL_BASE_URL}
+      # MCP_SERVER_LOG_LEVEL: ${MCP_SERVER_LOG_LEVEL}
     depends_on:
       api_gateway:
         condition: service_started
