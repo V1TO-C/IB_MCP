@@ -1,6 +1,15 @@
 import os
 import sys
 
+# Add routers path
+# Load routers path and inject into sys.path
+ROUTERS_PATH = os.environ.get("ROUTERS_PATH")
+if os.path.isdir(ROUTERS_PATH):
+    sys.path.insert(0, ROUTERS_PATH)
+else:
+    print(f"⚠️ Warning: ROUTERS_PATH '{ROUTERS_PATH}' does not exist.")
+
+
 # Load environment variables
 GATEWAY_PORT = os.environ.get("GATEWAY_PORT")
 GATEWAY_ENDPOINT = os.environ.get("GATEWAY_ENDPOINT")

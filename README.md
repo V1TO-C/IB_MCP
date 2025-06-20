@@ -5,6 +5,13 @@
 ## Project Status
 This project is currently under active development. Features may be incomplete, and breaking changes may occur. Use at your own risk.
 
+Currently [IB REST API (2.16.0) OpenAPI specification](https://api.ibkr.com/gw/api/v3/api-docs) fails validation and the automated router generation feature fails to generate routers. You can try to validate yourself here:
+
+- https://oas-validation.com/
+- https://editor.swagger.io/
+
+I currently have 351 errors.
+
 ## Table of Contents
 - [Interactive Brokers Model Context Protocol](#interactive-brokers-model-context-protocol)
   - [Project Status](#project-status)
@@ -138,6 +145,7 @@ If the brokerage session has timed out but the session is still connected to the
 - [IB WEB API openapi docs](https://api.ibkr.com/gw/api/v3/api-docs)
 
 - [ibeam](https://github.com/Voyz/ibeam): Facilitates continuous headless run of the Gateway. Not so secure - "Yupp, you'll need to store the credentials somewhere, and that's a risk. Read more about it in Security."- 
+- [fastapi-codegen](https://github.com/koxudaxi/fastapi-code-generator)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

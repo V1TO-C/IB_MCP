@@ -26,7 +26,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-
+  
   tickler:
     build:
       context: ./tickler
@@ -50,6 +50,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  
+  routers_generator:
+    build:
+      context: ./routers_generator
+    container_name: router_generator
+    environment:
+      - OPEN_API_SPEC_URL=${OPEN_API_SPEC_URL}
+    volumes:
+      - ./routers:/app/routers
+    restart: "no"
 
   mcp_server:
     container_name: mcp_server
@@ -61,7 +71,7 @@ services:
     env_file:
       - .env
     environment:
-      - XX:XX
+      - ROUTERS_PATH=/app/routers
       # GATEWAY_BASE_URL: ${GATEWAY_INTERNAL_BASE_URL}
       # GATEWAY_PORT: ${GATEWAY_PORT}
       # GATEWAY_ENDPOINT: ${GATEWAY_ENDPOINT}
@@ -80,6 +90,7 @@ services:
     volumes:
       # Mount local directory for development
       - ./mcp_server:/app/mcp_server
+      - ./routers:/app/routers:ro
     stdin_open: true
     tty: true
     restart: unless-stopped
@@ -87,3 +98,4 @@ services:
 networks:
   mcp_net:
     driver: bridge
+

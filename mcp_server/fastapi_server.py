@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastmcp import FastMCP
 from mcp_server.config import MCP_SERVER_HOST, MCP_SERVER_PORT, MCP_TRANSPORT_PROTOCOL
-from mcp_server.routers import trading_orders
+import trading_orders_base
+# import account_management
+# import trading
 
 app = FastAPI(
     title="IBKR Trading Orders API",
@@ -9,7 +11,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-app.include_router(trading_orders.router)
+app.include_router(trading_orders_base.router)
+# app.include_router(account_management.router)
+# app.include_router(trading.router)
 
 mcp = FastMCP.from_fastapi(app=app)
 
