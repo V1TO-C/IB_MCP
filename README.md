@@ -5,12 +5,12 @@
 ## Project Status
 This project is currently under active development. Features may be incomplete, and breaking changes may occur. Use at your own risk.
 
-Currently [IB REST API (2.16.0) OpenAPI specification](https://api.ibkr.com/gw/api/v3/api-docs) fails validation and the automated router generation feature fails to generate routers. You can try to validate yourself here:
+Currently the [IB REST API (2.16.0) OpenAPI specification](https://api.ibkr.com/gw/api/v3/api-docs) fails validation, and the automated router generation feature is currently failing to generate routers. You can try to validate yourself here:
 
 - https://oas-validation.com/
 - https://editor.swagger.io/
 
-I currently have 351 errors.
+The spec currently has 351 errors. Therefore, router endpoints are currently being built manually, and their status is updated upon completion.
 
 ## Table of Contents
 - [Interactive Brokers Model Context Protocol](#interactive-brokers-model-context-protocol)
@@ -24,8 +24,8 @@ I currently have 351 errors.
         - [🔧 What This Container Does](#-what-this-container-does-1)
   - [Setup](#setup)
   - [Usage Example (WIP)](#usage-example-wip)
-    - [Limitations (Given the multi container set up)](#limitations-given-the-multi-container-set-up)
-    - [Reopen session:](#reopen-session)
+    - [Limitations of Multi-Container Setup](#limitations-of-multi-container-setup)
+    - [Session Management](#session-management)
   - [Roadmap](#roadmap)
     - [Current Priorities](#current-priorities)
     - [Future Work](#future-work)
@@ -87,7 +87,7 @@ This setup provides a containerized environment for the MCP server, enabling it 
     After the image is up and running, navigate to `https://{GATEWAY_BASE_URL}:{GATEWAY_PORT}`⁠ (e.g.: `https://localhost:9999/`) to login.
     If successful you should be redirected to a URL that reads: "Client login succeeds"
 
-3. Add MCP server config file (only the first time)
+3. Add the MCP server config file to your VS Code `settings.json` (only the first time)
 
     Given the following environment parameters
     ```
@@ -108,13 +108,13 @@ This setup provides a containerized environment for the MCP server, enabling it 
 
 ## Usage Example (WIP)
 
-### Limitations (Given the multi container set up)
+### Limitations of Multi-Container Setup
 
 - Users must log in through the browser on the same machine as Client Portal Gateway in order to authenticate.
 - All API Endpoint calls must be made on the same machine where the Client Portal Gateway was authenticated.
 - None of the endpoints beginning with /gw/api, /oauth, or /oauth2 are supported for use in the Client Portal Gateway.
 
-### Reopen session:
+### Session Management
 
 The additional /iserver/auth/ssodh/init endpoint is used to subsequently reopen a brokerage session with the backend, through which you can access the protected /iserver endpoints.
 
@@ -129,12 +129,12 @@ If the brokerage session has timed out but the session is still connected to the
 
 ### Current Priorities
 - Finish adding all available endpoints
-- Check MCP with [MCP Inspector] (https://heeki.medium.com/building-an-mcp-server-as-an-api-developer-cfc162d06a83#:~:text=Testing%20with%20MCP-,Inspector,-I%20mentioned%20testing)
+- Check MCP with [MCP Inspector] (https://heeki.medium.com/building-an-mcp-server-as-an-api-developer-cfc162d06a83)
 
 
 ### Future Work
 - Automatically generate endpoint
-  - Currently IB Web APi OpenApi file spec fails validations with too many errors.
+  - Currently IB Web API OpenApi file spec fails validations with too many errors.
   - According to IB team there is no intention for the tool to be used with LLMs so they won't be working on it any time soon.
 - Add OAuth
 
