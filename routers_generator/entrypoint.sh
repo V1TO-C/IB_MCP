@@ -7,11 +7,10 @@ if [ -z "$OPEN_API_SPEC_URL" ]; then
 fi
 
 echo "📥 Downloading OpenAPI spec from: $OPEN_API_SPEC_URL"
-curl -sSf "$OPEN_API_SPEC_URL" -o /app/openapi.yaml
+curl -sSf "$OPEN_API_SPEC_URL" -o /app/openapi.json
 
 # echo "🧬 Generating FastAPI router code..."
 # fastapi-codegen -i /app/openapi.yaml -o /app/routers
 
 echo "✅ Code generation complete. Files written to /app/routers"
 ls -l /app/routers
-

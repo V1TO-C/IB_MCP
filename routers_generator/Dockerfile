@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Add entrypoint script
 COPY entrypoint.sh .
+COPY validator.py .
 RUN chmod +x entrypoint.sh
 
 # Make sure the routers output dir exists
@@ -22,3 +23,4 @@ RUN mkdir -p /app/routers
 
 # Entrypoint
 ENTRYPOINT ["bash", "entrypoint.sh"]
+

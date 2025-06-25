@@ -54,10 +54,14 @@ services:
   routers_generator:
     build:
       context: ./routers_generator
-    container_name: router_generator
+    container_name: routers_generator
+    env_file:
+      - .env
     environment:
       - OPEN_API_SPEC_URL=${OPEN_API_SPEC_URL}
+      - OPENAPI_FILE_PATH=${OPENAPI_FILE_PATH}
     volumes:
+      - ./routers_generator:/app/
       - ./routers:/app/routers
     restart: "no"
 

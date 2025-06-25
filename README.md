@@ -29,6 +29,7 @@ I currently have 351 errors.
   - [Roadmap](#roadmap)
     - [Current Priorities](#current-priorities)
     - [Future Work](#future-work)
+    - [Endpoints Status](#endpoints-status)
   - [References](#references)
   - [License](#license)
 
@@ -127,13 +128,20 @@ If the brokerage session has timed out but the session is still connected to the
 ## Roadmap
 
 ### Current Priorities
-- Automatically generate routers from OpenApi specification.
-- Be able to check the automatic tools generation
+- Finish adding all available endpoints
+- Check MCP with [MCP Inspector] (https://heeki.medium.com/building-an-mcp-server-as-an-api-developer-cfc162d06a83#:~:text=Testing%20with%20MCP-,Inspector,-I%20mentioned%20testing)
+
 
 ### Future Work
-- Test MCP server functionality.
-- Test MCP server with LLM.
+- Automatically generate endpoint
+  - Currently IB Web APi OpenApi file spec fails validations with too many errors.
+  - According to IB team there is no intention for the tool to be used with LLMs so they won't be working on it any time soon.
 - Add OAuth
+
+### Endpoints Status
+
+👉 See the full list of [API Endpoints Staus](ENDPOINTS.md)
+
 
 ## References
 - [IB WEB API Docker implementation](https://github.com/hackingthemarkets/interactive-brokers-web-api)
@@ -142,10 +150,13 @@ If the brokerage session has timed out but the session is still connected to the
 - [FAST MCP Documentation](https://gofastmcp.com/servers/fastmcp)
 - [FAST MCP openapi integration](https://gofastmcp.com/servers/openapi) 
 - [IB WEB API Reference](https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-ref/)
-- [IB WEB API openapi docs](https://api.ibkr.com/gw/api/v3/api-docs)
+- [IB WEB API openapi docs](https://api.ibkr.com/gw/api/v3/api-docs) Outdated!
+- [IB WEB API Reference page](https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#introduction) Latest Reference Page
 
 - [ibeam](https://github.com/Voyz/ibeam): Facilitates continuous headless run of the Gateway. Not so secure - "Yupp, you'll need to store the credentials somewhere, and that's a risk. Read more about it in Security."- 
 - [fastapi-codegen](https://github.com/koxudaxi/fastapi-code-generator)
+- [openapi spec validator repo](https://github.com/python-openapi/openapi-spec-validator)
+- [openapi spec validator docs](https://openapi-spec-validator.readthedocs.io/en/latest/python.html)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
