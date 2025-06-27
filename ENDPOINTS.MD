@@ -10,22 +10,23 @@
 | `DELETE` | `/iserver/account/{accountId}/alert/{alertId}` | Deletes a single alert for the given account.        | 🟠     |
 | `GET`  | `/iserver/account/{accountId}/alerts`        | Returns a list of alerts for the specified account.  | 🟠     |
 
-## Contract (12)
+## Contract (13)
 
-| Method | Endpoint                               | Description                                                    | Status |
-|--------|----------------------------------------|----------------------------------------------------------------|--------|
-| `POST` | `/iserver/contract/rules`              | Returns trading rules for a contract.                          | 🟠     |
-| `GET`  | `/iserver/contract/{conid}/info`       | Get full contract details for a given contract ID (conid).     | 🟠     |
-| `GET`  | `/iserver/secdef/bonds`                | Search for bond contracts by symbol or CUSIP.                  | 🟠     |
-| `GET`  | `/iserver/secdef/currency`             | Search for currency pairs.                                     | 🟠     |
-| `GET`  | `/iserver/secdef/futures`              | Returns a list of non-expired future contracts for a symbol.   | 🟠     |
-| `GET`  | `/iserver/secdef/info`                 | Provides security definition and rules for a given conid.      | 🟠     |
-| `GET`  | `/iserver/secdef/search`               | Search for contracts by symbol or company name.                | 🟠     |
-| `GET`  | `/iserver/secdef/search/strikes`       | Search for available strikes for a given option contract.      | 🟠     |
-| `GET`  | `/iserver/secdef/strikes`              | Get a list of available option strikes for an underlying.      | 🟠     |
-| `GET`  | `/trsrv/futures`                       | Returns a list of futures for the given symbols.               | 🟠     |
-| `GET`  | `/trsrv/options`                       | Returns a list of options for a given underlying conid.        | 🟠     |
-| `GET`  | `/trsrv/stocks`                        | Returns a list of stock contracts for the given symbols.       | 🟠     |
+| Method | Endpoint                                   | Description                                                     | Status |
+|--------|--------------------------------------------|-----------------------------------------------------------------|--------|
+| `GET`  | `/iserver/contract/{conid}/algos`          | Returns a list of available IB Algos for a contract.            | 🟠     |
+| `GET`  | `/iserver/contract/{conid}/info`           | Get full contract details for a given contract ID (conid).      | 🟠     |
+| `GET`  | `/iserver/contract/{conid}/info-and-rules` | Returns a conglomeration of contract information and trading rules. | 🟠     |
+| `POST` | `/iserver/contract/rules`                  | Returns trading rules for a contract.                           | 🟠     |
+| `GET`  | `/iserver/secdef/bond-filters`             | Returns a list of available bond filters for a given issuer.    | 🟢     |
+| `GET`  | `/iserver/secdef/currency`                 | Search for currency pairs.                                      | 🟠     |
+| `GET`  | `/iserver/secdef/info`                     | Provides security definition and rules information for a given conid. | 🟠     |
+| `GET`  | `/iserver/secdef/search`                   | Search for contracts by symbol or company name.                 | 🟢     |
+| `GET`  | `/iserver/secdef/strikes`                  | Get a list of available option strikes for a given underlying.  | 🟠     |
+| `GET`  | `/trsrv/futures`                           | Returns a list of futures for the given symbols.                | 🟠     |
+| `GET`  | `/trsrv/secdef`                            | Returns a list of security definitions for the given conids.    | 🟠     |
+| `GET`  | `/trsrv/secdef/schedule`                   | Returns the trading schedule for a contract.                    | 🟠     |
+| `GET`  | `/trsrv/stocks`                            | Returns a list of stock contracts for the given symbols.        | 🟠     |
 
 ## Events Contracts (2)
 
@@ -62,9 +63,9 @@
 | `GET`  | `/iserver/marketdata/availability`     | Returns a dictionary explaining market data availability codes. | 🟠     |
 | `GET`  | `/iserver/marketdata/bars`             | Returns a dictionary of valid bar units for historical data.    | 🟠     |
 | `GET`  | `/iserver/marketdata/fields`           | Returns a list of all available fields for snapshots.           | 🟠     |
-| `GET`  | `/iserver/marketdata/history`          | Get historical market data for a contract.                      | 🟠     |
+| `GET`  | `/iserver/marketdata/history`          | Get historical market data for a contract.                      | 🟢     |
 | `GET`  | `/iserver/marketdata/periods`          | Returns a dictionary of valid period units for historical data. | 🟠     |
-| `GET`  | `/iserver/marketdata/snapshot`         | Get a snapshot of market data for one or more contracts.        | 🟠     |
+| `GET`  | `/iserver/marketdata/snapshot`         | Get a snapshot of market data for one or more contracts.        | 🟢     |
 | `POST` | `/iserver/marketdata/unsubscribe`      | Unsubscribes from a specific market data feed.                  | 🟠     |
 | `POST` | `/iserver/marketdata/unsubscribeall`   | Unsubscribes from all current market data subscriptions.        | 🟠     |
 | `GET`  | `/md/snapshot`                         | Get a non-streaming snapshot of market data for conids.         | 🟠     |

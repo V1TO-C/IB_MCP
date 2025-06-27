@@ -1,7 +1,10 @@
+import os
 from fastapi import FastAPI
 from fastmcp import FastMCP
-from mcp_server.config import MCP_SERVER_HOST, MCP_SERVER_PORT, MCP_TRANSPORT_PROTOCOL
+from fastmcp.server.openapi import RouteMap, MCPType
+from mcp_server.config import MCP_SERVER_HOST, MCP_SERVER_PORT, MCP_TRANSPORT_PROTOCOL, FINAL_DESCRIPTION, EXCLUDED_TAGS_SET
 
+# Import Router Files
 import alerts
 import contract
 import events_contracts
@@ -19,7 +22,7 @@ import watchlists
 
 app = FastAPI(
     title="IBKR API",
-    description="Retrieves open orders and filled or cancelled orders submitted during the current brokerage session.",
+    description=FINAL_DESCRIPTION,
     version="1.0.0"
 )
 
@@ -38,7 +41,17 @@ app.include_router(session.router)
 app.include_router(watchlists.router)
 
 
-mcp = FastMCP.from_fastapi(app=app)
+route_maps_list = []
+
+if EXCLUDED_TAGS_SET:    
+    for tag_ in EXCLUDED_TAGS_SET:
+        route_maps_list.append(RouteMap(tags={tag_}, mcp_type=MCPType.EXCLUDE))
+
+
+mcp = FastMCP.from_fastapi(
+    app=app,
+    route_maps = route_maps_list,
+    )
 
 if __name__ == "__main__":
     mcp.run(
