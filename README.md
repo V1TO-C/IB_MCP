@@ -1,7 +1,6 @@
 <div align="center">
 
-# Interactive Brokers Web API Model Context Protocol
-
+<img src="assets/banner.png" alt="Interactive Brokers Web API – Model Context Protocol" />
 
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -16,22 +15,22 @@
 > This project is currently under active development. Features may be incomplete, and breaking changes may occur.
 
 ## Table of Contents
-- [Interactive Brokers Web API Model Context Protocol](#interactive-brokers-web-api-model-context-protocol)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Architecture](#architecture)
-    - [📦 Interactive Brokers Client Portal Gateway Docker Container](#-interactive-brokers-client-portal-gateway-docker-container)
-        - [🔧 What This Container Does](#-what-this-container-does)
-    - [📦 Interactive Brokers Routers Generator Docker Container \[WIP\]](#-interactive-brokers-routers-generator-docker-container-wip)
-    - [📦 IB MCP Server Docker Container](#-ib-mcp-server-docker-container)
-        - [🔧 What This Container Does](#-what-this-container-does-1)
-  - [Docker Desktop Setup](#docker-desktop-setup)
-    - [Limitations of Multi-Container Setup](#limitations-of-multi-container-setup)
-    - [Session Management](#session-management)
-    - [Future Work](#future-work)
-    - [Endpoints Status](#endpoints-status)
-  - [References](#references)
-  - [License](#license)
+- [Table of Contents](#table-of-contents)
+- [Overview](#overview)
+- [Architecture](#architecture)
+  - [📦 Interactive Brokers Client Portal Gateway Docker Container](#-interactive-brokers-client-portal-gateway-docker-container)
+      - [🔧 What This Container Does](#-what-this-container-does)
+  - [📦 Interactive Brokers Routers Generator Docker Container \[WIP\]](#-interactive-brokers-routers-generator-docker-container-wip)
+  - [📦 IB MCP Server Docker Container](#-ib-mcp-server-docker-container)
+      - [🔧 What This Container Does](#-what-this-container-does-1)
+- [Docker Desktop Setup](#docker-desktop-setup)
+  - [Limitations of Multi-Container Setup](#limitations-of-multi-container-setup)
+  - [Session Management](#session-management)
+  - [Future Work](#future-work)
+  - [Endpoints Status](#endpoints-status)
+- [References](#references)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Overview
 
@@ -68,18 +67,18 @@ This setup provides a self-contained, reproducible environment for securely runn
 
 ### 📦 Interactive Brokers Routers Generator Docker Container [WIP]
 
-Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Enpoints Status](#endpoints-status)]
+Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Enpoints Status](#endpoints-status)
 
 ### 📦 IB MCP Server Docker Container
 This Docker container sets up and runs the **Interactive Brokers (IB) Model Context Protocol (MCP) Server**, which provides an interface for interacting with the IB API gateway.
 
 ##### 🔧 What This Container Does
 
-- **Base Image**: (Specify base image, e.g., `python:3.9-slim-buster`)
-- **Installs Dependencies**: (Specify dependencies, e.g., `pip install -r requirements.txt`)
-- **Configuration**: (Describe any specific configuration steps or files)
-- **Port Exposure**: (Specify exposed ports, e.g., `5008`)
-- **Startup Command**: (Describe how the server is started)
+- **Base Image**: Uses `ghcr.io/astral-sh/uv:python3.11-bookworm-slim` for a lightweight Python 3.11 environment with `uv`.
+- **Installs Dependencies**: Installs `curl` for system dependencies and uses `uv sync` to install Python dependencies from `pyproject.toml`.
+- **Configuration**: Copies the `pyproject.toml` and the entire `mcp_server` directory into the container. Sets `PYTHONPATH` to `/app` and `UV_CACHE_DIR` to `/tmp/uv-cache`.
+- **Port Exposure**: Exposes the port specified by the `MCP_SERVER_PORT` environment variable (e.g., `5002`).
+- **Startup Command**: Runs the FastAPI server using `uv run -- python /app/mcp_server/fastapi_server.py`.
 
 This setup provides a containerized environment for the MCP server, enabling it to communicate with the IB Client Portal Gateway.
 
@@ -172,7 +171,7 @@ If the brokerage session has timed out but the session is still connected to the
   - https://editor.swagger.io/
 
   The spec currently has 351 errors. Therefore, router endpoints are currently being built manually, and their status is updated upon completion.
-  - According to IB team there is no intention for the tool to be used with LLMs so they won't be working on it any time soon.
+  - Due to issues with the official OpenAPI specification and the IB team's current focus, automated router generation is not feasible at this time, and routers are being built manually.
 - Add OAuth
 
 ### Endpoints Status
@@ -195,6 +194,14 @@ Endpoints are currently manuallu built.
 - [fastapi-codegen](https://github.com/koxudaxi/fastapi-code-generator)
 - [openapi spec validator repo](https://github.com/python-openapi/openapi-spec-validator)
 - [openapi spec validator docs](https://openapi-spec-validator.readthedocs.io/en/latest/python.html)
+
+## Contributing
+We welcome contributions to this project! If you'd like to contribute, please follow these guidelines:
+
+1.  **Fork the repository** and create your branch from `main`.
+2.  **Report bugs** by opening an issue with a clear description and steps to reproduce.
+3.  **Suggest features** by opening an issue to discuss your ideas.
+4.  **Submit pull requests** for bug fixes, new features, or improvements. Please ensure your code adheres to the existing style, includes relevant tests, and has clear commit messages.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
