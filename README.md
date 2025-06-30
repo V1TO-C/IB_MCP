@@ -67,7 +67,7 @@ This setup provides a self-contained, reproducible environment for securely runn
 
 ### 📦 Interactive Brokers Routers Generator Docker Container [WIP]
 
-Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Enpoints Status](#endpoints-status)
+Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Endpoints Status](#endpoints-status)
 
 ### 📦 IB MCP Server Docker Container
 This Docker container sets up and runs the **Interactive Brokers (IB) Model Context Protocol (MCP) Server**, which provides an interface for interacting with the IB API gateway.
