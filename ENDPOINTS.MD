@@ -1,4 +1,4 @@
-# IB API Endpoints (Total: 78)
+# IB API Endpoints (Total: 79)
 
 ## Alerts (5)
 

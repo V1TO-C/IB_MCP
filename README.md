@@ -1,33 +1,33 @@
-# Interactive Brokers Model Context Protocol
+<div align="center">
+
+# Interactive Brokers Web API Model Context Protocol
+
+
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-## Project Status
-This project is currently under active development. Features may be incomplete, and breaking changes may occur. Use at your own risk.
+![sample](./assets/sample_usecase.gif)
 
-Currently the [IB REST API (2.16.0) OpenAPI specification](https://api.ibkr.com/gw/api/v3/api-docs) fails validation, and the automated router generation feature is currently failing to generate routers. You can try to validate yourself here:
+</div>
 
-- https://oas-validation.com/
-- https://editor.swagger.io/
-
-The spec currently has 351 errors. Therefore, router endpoints are currently being built manually, and their status is updated upon completion.
+> [!Note]
+>
+> #### Project Status
+> This project is currently under active development. Features may be incomplete, and breaking changes may occur.
 
 ## Table of Contents
-- [Interactive Brokers Model Context Protocol](#interactive-brokers-model-context-protocol)
-  - [Project Status](#project-status)
+- [Interactive Brokers Web API Model Context Protocol](#interactive-brokers-web-api-model-context-protocol)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Architecture](#architecture)
     - [📦 Interactive Brokers Client Portal Gateway Docker Container](#-interactive-brokers-client-portal-gateway-docker-container)
         - [🔧 What This Container Does](#-what-this-container-does)
+    - [📦 Interactive Brokers Routers Generator Docker Container \[WIP\]](#-interactive-brokers-routers-generator-docker-container-wip)
     - [📦 IB MCP Server Docker Container](#-ib-mcp-server-docker-container)
         - [🔧 What This Container Does](#-what-this-container-does-1)
-  - [Setup](#setup)
-  - [Usage Example (WIP)](#usage-example-wip)
+  - [Docker Desktop Setup](#docker-desktop-setup)
     - [Limitations of Multi-Container Setup](#limitations-of-multi-container-setup)
     - [Session Management](#session-management)
-  - [Roadmap](#roadmap)
-    - [Current Priorities](#current-priorities)
     - [Future Work](#future-work)
     - [Endpoints Status](#endpoints-status)
   - [References](#references)
@@ -35,17 +35,18 @@ The spec currently has 351 errors. Therefore, router endpoints are currently bei
 
 ## Overview
 
-This project provides an Interactive Brokers (IB) API interface using the Model Context Protocol (MCP). There are several ways to interact with Interactive Brokers, like the TWS API, the WEB API, Excel RTD and FIX among others. This project is built on top of Interactive Brokers WEB API.
+This project provides an Interactive Brokers (IB) API interface using the Model Context Protocol (MCP). There are several ways to interact with Interactive Brokers, like the [TWS API](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/), the WEB API, [Excel RTD](https://www.interactivebrokers.com/campus/ibkr-api-page/excel-rtd/#introduction) and FIX among others. This project is built on top of Interactive Brokers [WEB API](https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-doc/#introduction-0).
 
-IB offers two types of Authentication to their WebAPI, one for retail and individual clients and one for institutional and third party developers. This development uses the retail authentication process which is managed using the Client Portal Gateway, a small Java program used to route local web requests with appropriate authentication. 
+This development uses the retail authentication process which is managed using the Client Portal Gateway, a small Java program used to route local web requests with appropriate authentication. 
 
 ## Architecture
 
-The project consists of 3 main components:
+The project consists of 4 main components:
 
 *   **api_gateway:** Runs the Interactive Brokers Client Portal Gateway in a Docker container to enable secure access to the IB REST API.
 *   **ticker_service:** This service is responsible for maintaining the Interactive Brokers session by periodically calling the `/tickle` endpoint to prevent session timeouts, as detailed in the 'Reopen Session' section. This service runs in a Docker container.
-*   **mcp_server:** MCP server that interacts with API gateway. This service also runs in a Docker container.
+*   **routers_generator:** Based on official documentation it automatically creates FastAPI routers and saves them in the routers directory.
+*   **mcp_server:** MCP server built with FastMCP that interacts with API gateway by adding the routers previously generated This service also runs in a Docker container.
 
 
 ### 📦 Interactive Brokers Client Portal Gateway Docker Container
@@ -65,6 +66,9 @@ This Docker container sets up and runs the **Interactive Brokers (IB) Client Por
 
 This setup provides a self-contained, reproducible environment for securely running the Interactive Brokers REST API gateway in a containerized environment.
 
+### 📦 Interactive Brokers Routers Generator Docker Container [WIP]
+
+Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Enpoints Status](#endpoints-status)]
 
 ### 📦 IB MCP Server Docker Container
 This Docker container sets up and runs the **Interactive Brokers (IB) Model Context Protocol (MCP) Server**, which provides an interface for interacting with the IB API gateway.
@@ -80,19 +84,37 @@ This Docker container sets up and runs the **Interactive Brokers (IB) Model Cont
 This setup provides a containerized environment for the MCP server, enabling it to communicate with the IB Client Portal Gateway.
 
 
-## Setup
-0. Copy this `.env.example` file to `.env` and fill in your actual values
-1. Build the image with: `docker compose up --build -d`
-2. Auth with your IB account and credentials to:
-    After the image is up and running, navigate to `https://{GATEWAY_BASE_URL}:{GATEWAY_PORT}`⁠ (e.g.: `https://localhost:9999/`) to login.
-    If successful you should be redirected to a URL that reads: "Client login succeeds"
+## Docker Desktop Setup
 
-3. Add the MCP server config file to your VS Code `settings.json` (only the first time)
+See a quick walktrough in [YOUTUBE](https://www.youtube.com/watch?v=PyQz_kMQ9ek)
+
+1. Clone the repo, set env variables and build the images
+    ```bash
+    # Clone the repository
+    git clone https://github.com/rcontesti/IB_MCP.git
+
+    # Navigate to the project directory
+    cd IB_MCP
+
+    # Copy the .env.example file to .env and edit as needed
+    cp .env.example .env
+
+    # Build the image
+    docker compose up --build -d
+
+    ```
+2. Auth with your IB account and credentials to:
+    After the image is up and running, navigate to `https://{GATEWAY_BASE_URL}:{GATEWAY_PORT}`⁠ (e.g.: `https://localhost:5055/`) to login.
+    You will also find the login path in the logs of the API gateway container:
+    ![Where to find the login path](./assets/LOGIN_URL.png)
+    If successful you should be redirected to a URL that reads: "Client login succeeds".
+
+3. Add the MCP server config file to your VS Code `settings.json`.
 
     Given the following environment parameters
     ```
     MCP_SERVER_HOST=0.0.0.0
-    MCP_SERVER_PORT=5008
+    MCP_SERVER_PORT=5002
     MCP_SERVER_PATH=/mcp
     MCP_TRANSPORT_PROTOCOL=streamable-http
     ```
@@ -100,13 +122,31 @@ This setup provides a containerized environment for the MCP server, enabling it 
     the VS Code MCP server snippet in `settings.json` would look like:
 
     ```json
-    "ib-mcp-server": {
-        "type": "http",
-        "url": "http://localhost:5008/mcp/",
+    {
+      ...
+        },
+        "chat.mcp.discovery.enabled": true,
+        "mcp": {
+            "inputs": [],
+            "servers": {
+                "time": {
+                "command": "docker",
+                "args": ["run", "-i", "--rm", "mcp/time"]
+                },
+                "ib-web": {
+                    "type": "http",
+                    "url": "http://localhost:5002/mcp/",
+                }
+            }
+        },
+        "workbench.colorTheme": "Tomorrow Night Blue"
     }
     ```
+    Check [Use MCP servers in VS Code (Preview)](https://code.visualstudio.com/docs/copilot/chat/mcp-servers) for further reference.
 
-## Usage Example (WIP)
+4. Start the MCP in Copilot
+
+
 
 ### Limitations of Multi-Container Setup
 
@@ -124,37 +164,34 @@ In order to prevent the session from timing out, the endpoint /tickle should be 
 
 If the brokerage session has timed out but the session is still connected to the IBKR backend, the response to /auth/status returns ‘connected’:true and ‘authenticated’:false. Calling the /iserver/auth/ssodh/init endpoint will initialize a new brokerage session.
 
-
-## Roadmap
-
-### Current Priorities
-- Finish adding all available endpoints
-- Check MCP with [MCP Inspector] (https://heeki.medium.com/building-an-mcp-server-as-an-api-developer-cfc162d06a83)
-
-
 ### Future Work
-- Automatically generate endpoint
-  - Currently IB Web API OpenApi file spec fails validations with too many errors.
+- Automatically generate endpoints
+  - Currently the [IB REST API (2.16.0) OpenAPI specification](https://api.ibkr.com/gw/api/v3/api-docs) fails validation, and the automated router generation feature is currently failing to generate routers. You can try to validate yourself here:
+
+  - https://oas-validation.com/
+  - https://editor.swagger.io/
+
+  The spec currently has 351 errors. Therefore, router endpoints are currently being built manually, and their status is updated upon completion.
   - According to IB team there is no intention for the tool to be used with LLMs so they won't be working on it any time soon.
 - Add OAuth
 
 ### Endpoints Status
 
+Endpoints are currently manuallu built.
+
 👉 See the full list of [API Endpoints Staus](ENDPOINTS.md)
 
 
 ## References
-- [IB WEB API Docker implementation](https://github.com/hackingthemarkets/interactive-brokers-web-api)
+- [IB WEB API Reference](https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-ref/)
+- [IB WEB API openapi docs](https://api.ibkr.com/gw/api/v3/api-docs) Outdated!
+- [IB WEB API Reference page](https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#introduction) 
   
 - [FAST MCP](https://github.com/jlowin/fastmcp)
 - [FAST MCP Documentation](https://gofastmcp.com/servers/fastmcp)
-- [FAST MCP openapi integration](https://gofastmcp.com/servers/openapi) 
-- [IB WEB API Reference](https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-ref/)
-  
-- [IB WEB API openapi docs](https://api.ibkr.com/gw/api/v3/api-docs) Outdated!
-- [IB WEB API Reference page](https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#introduction) Latest Reference Page
+- [FAST MCP openapi integration](https://gofastmcp.com/servers/openapi)
 
-- [ibeam](https://github.com/Voyz/ibeam): Facilitates continuous headless run of the Gateway. Not so secure - "Yupp, you'll need to store the credentials somewhere, and that's a risk. Read more about it in Security."- 
+- [ibeam](https://github.com/Voyz/ibeam)
 - [fastapi-codegen](https://github.com/koxudaxi/fastapi-code-generator)
 - [openapi spec validator repo](https://github.com/python-openapi/openapi-spec-validator)
 - [openapi spec validator docs](https://openapi-spec-validator.readthedocs.io/en/latest/python.html)
