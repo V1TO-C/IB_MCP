@@ -28,6 +28,7 @@
   - [Session Management](#session-management)
   - [Future Work](#future-work)
   - [Endpoints Status](#endpoints-status)
+- [Limitations](#limitations)
 - [References](#references)
 - [Contributing](#contributing)
 - [License](#license)
@@ -180,6 +181,11 @@ Endpoints are currently manuallu built.
 
 👉 See the full list of [API Endpoints Staus](ENDPOINTS.md)
 
+
+## Limitations
+
+- **Claude Desktop:** The current development only supports streamable HTTP and claude desktop Remote MCP server support is currently in beta and available for users on Claude Pro, Max, Team, and Enterprise plans (as of June 2025).
+- **Cline:** Cline still has issues with streamble HTTP with remote servers
 
 ## References
 - [IB WEB API Reference](https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-ref/)
