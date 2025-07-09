@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Query, Body, Path
 from typing import List, Optional
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from mcp_server.config import BASE_URL
 
 router = APIRouter()
@@ -14,13 +14,14 @@ class ContractRulesRequest(BaseModel):
     conid: int = Field(..., description="The contract ID for which to retrieve trading rules.")
     isBuy: bool = Field(..., description="Specify true for buy side rules, false for sell side rules.")
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra = {
             "example": {
                 "conid": 265598, # IBM
                 "isBuy": True
             }
         }
+    )
 
 
 # --- Contract Router Endpoints ---

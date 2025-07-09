@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Body
 from typing import List
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from mcp_server.config import BASE_URL
 
 router = APIRouter()
@@ -22,8 +22,8 @@ class FAGroup(BaseModel):
     method: str = Field(..., description="The allocation method. Valid values: 'NetLiq', 'Equal', 'PctChange', 'AvailableEquity', 'Ratio'.")
     accounts: List[AccountAllocation] = Field(..., description="A list of accounts and their allocations within the group.")
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra = {
             "example": {
                 "name": "MyTestGroup",
                 "method": "Ratio",
@@ -33,6 +33,7 @@ class FAGroup(BaseModel):
                 ]
             }
         }
+    )
 
 
 # --- FA Allocation Management Router Endpoints ---

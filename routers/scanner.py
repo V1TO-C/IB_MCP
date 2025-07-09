@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body
 from fastapi.responses import Response
 from typing import List, Optional, Any
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from mcp_server.config import BASE_URL
 
 router = APIRouter()
@@ -25,8 +25,8 @@ class ScannerSubscription(BaseModel):
     locationCode: str = Field(..., description="The location code, e.g., 'STK.US.MAJOR'.")
     filter: Optional[List[FilterItem]] = Field(None, description="A list of filters for the scan.")
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra = {
             "example": {
                 "instrument": "STK",
                 "type": "TOP_PERC_GAIN",
@@ -37,6 +37,7 @@ class ScannerSubscription(BaseModel):
                 ]
             }
         }
+    )
 
 class HmdsScannerRequest(BaseModel):
     """
@@ -49,8 +50,8 @@ class HmdsScannerRequest(BaseModel):
     secType: str = Field(..., description="The security type, e.g., 'STK'.")
     filters: Any = Field(None, description="An object containing scanner filters.")
 
-    class Config:
-        schema_extra = {
+    class ConfigDict:
+        json_schema_extra = {
             "example": {
                 "instrument": "STK",
                 "locations": "STK.US.MAJOR",

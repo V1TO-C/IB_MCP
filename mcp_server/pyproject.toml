@@ -8,14 +8,14 @@ authors = [
 
 requires-python = ">=3.11"
 dependencies = [
-    "fastmcp>=2.5.0",
-    "fastapi>=0.115.12",
-    "uvicorn>=0.24.0",
-    "httpx>=0.24.0",
-    "urllib3>=2.0.0",
-    "mcp>=0.5.0",
-    "asyncio>=3.4.3",
-    "aiohttp>=3.9.0",
+    "fastmcp==2.10.3",
+    "fastapi==0.116.0",
+    "uvicorn==0.35.0",
+    "httpx==0.28.1",
+    "urllib3==2.5.0",
+    "mcp==1.10.1",
+    "asyncio==3.4.3",
+    "aiohttp==3.12.13",
 ]
 
 [tool.uv]

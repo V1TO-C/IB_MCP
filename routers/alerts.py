@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Query, Body, Path
 from typing import List, Optional, Any
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from mcp_server.config import BASE_URL
 
 router = APIRouter()
@@ -33,8 +33,8 @@ class AlertRequest(BaseModel):
     outsideRth: bool = Field(False, description="Set to true to allow the alert to trigger outside regular trading hours.")
     iTtif: bool = Field(False, description="Set to true to allow the alert to trigger during extended trading hours.")
 
-    class Config:
-        schema_extra = {
+    class ConfigDict:
+        json_schema_extra = {
             "example": {
                 "alertName": "Price Alert for IBM",
                 "alertMessage": "IBM crossed 175",

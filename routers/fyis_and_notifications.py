@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Body, Path, Query
 from typing import List, Optional
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from mcp_server.config import BASE_URL
 
 router = APIRouter()

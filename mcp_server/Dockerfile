@@ -8,8 +8,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+
 # Copy uv files first for better caching
 COPY pyproject.toml ./
+
 
 # Copy the server code
 # Copy the entire mcp_server directory

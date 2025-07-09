@@ -37,7 +37,7 @@ except ValueError:
 
 
 BASE_URL = f"{GATEWAY_INTERNAL_BASE_URL}:{GATEWAY_PORT}{GATEWAY_ENDPOINT}"
-
+print("BASE_URL:", BASE_URL)
 
 # Create FastAPI object description based on filters
 base_description = """
