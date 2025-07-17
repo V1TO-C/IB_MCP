@@ -10,11 +10,11 @@ RUN mkdir api_gateway && cd api_gateway && \
     curl -O https://download2.interactivebrokers.com/portal/clientportal.gw.zip && \
     unzip clientportal.gw.zip && rm clientportal.gw.zip
 
-# # Create the directory where the config file is expected
-# RUN mkdir -p gateway/root
+# Create the directory where the config file is expected
+RUN mkdir -p api_gateway/root
 
 # Copy our config so that the gateway will use it
-COPY conf.yaml gateway/root/conf.yaml
+COPY conf.yaml api_gateway/root/conf.yaml
 
 # Make the entrypoint script executable
 COPY run_gateway.sh /app/run_gateway.sh
@@ -29,4 +29,4 @@ EXPOSE 5055
 
 ENTRYPOINT ["/app/run_gateway.sh", "api_gateway/root/conf.yaml"]
 
-CMD bin/run.sh root/conf.yaml
+CMD api_gateway/bin/run.sh api_gateway/root/conf.yaml

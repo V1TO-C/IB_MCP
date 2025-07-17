@@ -4,6 +4,7 @@ services:
     build:
       context: ./api_gateway
       dockerfile: Dockerfile
+    image: ib_mcp_api_gateway:v0.1
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
     env_file:
@@ -32,6 +33,7 @@ services:
       context: ./tickler
       dockerfile: Dockerfile
     container_name: api_tickler
+    image: ib_mcp_tickler:v0.0
     depends_on:
       api_gateway:
         condition: service_healthy
@@ -70,6 +72,7 @@ services:
     build:
       context: ./mcp_server
       dockerfile: Dockerfile
+    image: ib_mcp_api_gateway:v0.0
     ports:
       - "${MCP_SERVER_PORT}:${MCP_SERVER_PORT}"
     env_file:
