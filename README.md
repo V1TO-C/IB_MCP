@@ -14,11 +14,12 @@
 > #### Project Status
 > This project is currently under active development. Features may be incomplete, and breaking changes may occur.
 
-#### Motivation: TWS API MCP vs. WEB API MCP?
+## Motivation 
 
 This project is built exclusively on the Interactive Brokers Web API, and this is a deliberate design choice. While the TWS API is powerful, the Web API provides a more modern and flexible foundation for the goals of this project.
 
-**Why not using the TWS API?** The short answer is that the WEB API is planned to be more comprehensive. By more comprehensive I mean, it brings account management, specifically reporting into the same place. The two other important reasons are: 1. The Web API is standalone. It does not require you to run the TWS desktop software or IB Gateway. 2. Model context protocols (MCPs) are easier to build on top of HTTPS communication rather than TCP/IP sockets.
+### TWS API MCP vs. WEB API MCP?
+**Why not using the TWS API?** The short answer is that the WEB API is planned to be more comprehensive. By more comprehensive I mean, it brings account management, specifically reporting, into the same place. The two other important reasons are: 1. The Web API is standalone. It does not require you to run the TWS desktop software or IB Gateway. 2. Model context protocols (MCPs) are easier to build on top of HTTPS communication rather than TCP/IP sockets.
 
 **If it is more comprehensive why not using just the WEB API?** Three reasons: 1. WEB API is in beta (see [Limitations](#limitations)) 2. TWS is faster and more reliable for trading. 3. TWS has some trading functionalities that the WEB API does not have.
 
@@ -37,19 +38,19 @@ For a more detailed, side-by-side breakdown, please see the [TWS vs. Web API Com
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Overview](#overview)
+- [Docker Desktop Setup](#docker-desktop-setup)
+  - [Limitations of Multi-Container Setup](#limitations-of-multi-container-setup)
+  - [Session Management](#session-management)
+- [Future Work](#future-work)
+- [Endpoints Status](#endpoints-status)
+- [TWS vs WEB comparison](#-tws-vs-web-comparison)
+- [Limitations](#limitations)
 - [Architecture](#architecture)
   - [📦 Interactive Brokers Client Portal Gateway Docker Container](#-interactive-brokers-client-portal-gateway-docker-container)
       - [🔧 What This Container Does](#-what-this-container-does)
   - [📦 Interactive Brokers Routers Generator Docker Container \[WIP\]](#-interactive-brokers-routers-generator-docker-container-wip)
   - [📦 IB MCP Server Docker Container](#-ib-mcp-server-docker-container)
       - [🔧 What This Container Does](#-what-this-container-does-1)
-- [Docker Desktop Setup](#docker-desktop-setup)
-  - [Limitations of Multi-Container Setup](#limitations-of-multi-container-setup)
-  - [Session Management](#session-management)
-  - [Future Work](#future-work)
-  - [Endpoints Status](#endpoints-status)
-- [TWS vs WEB comparison](#-tws-vs-web-comparison)
-- [Limitations](#limitations)
 - [References](#references)
 - [Contributing](#contributing)
 - [License](#license)
@@ -59,51 +60,6 @@ For a more detailed, side-by-side breakdown, please see the [TWS vs. Web API Com
 This project provides an Interactive Brokers (IB) API interface using the Model Context Protocol (MCP). There are several ways to interact with Interactive Brokers, like the [TWS API](https://www.interactivebrokers.com/campus/ibkr-api-page/twsapi-doc/), the WEB API, [Excel RTD](https://www.interactivebrokers.com/campus/ibkr-api-page/excel-rtd/#introduction) and FIX among others. This project is built on top of Interactive Brokers [WEB API](https://www.interactivebrokers.com/campus/ibkr-api-page/webapi-doc/#introduction-0).
 
 This development uses the retail authentication process which is managed using the Client Portal Gateway, a small Java program used to route local web requests with appropriate authentication. 
-
-## Architecture
-
-The project consists of 4 main components:
-
-*   **api_gateway:** Runs the Interactive Brokers Client Portal Gateway in a Docker container to enable secure access to the IB REST API.
-*   **ticker_service:** This service is responsible for maintaining the Interactive Brokers session by periodically calling the `/tickle` endpoint to prevent session timeouts, as detailed in the 'Reopen Session' section. This service runs in a Docker container.
-*   **routers_generator:** Based on official documentation it automatically creates FastAPI routers and saves them in the routers directory.
-*   **mcp_server:** MCP server built with FastMCP that interacts with API gateway by adding the routers previously generated This service also runs in a Docker container.
-
-
-### 📦 Interactive Brokers Client Portal Gateway Docker Container
-
-This Docker container sets up and runs the **Interactive Brokers (IB) Client Portal Gateway**, which is required for applications to connect via the IB REST API.
-
-##### 🔧 What This Container Does
-
-- **Base Image**: Uses `eclipse-temurin:21` (Java 21) for compatibility with the IB Gateway.
-- **Installs Dependencies**: Installs `unzip` for extracting the gateway archive.
-- **Downloads Gateway**: Fetches the latest version of the Client Portal Gateway from the official Interactive Brokers source and unzips it.
-- **Configuration**:
-  - Copies a custom `conf.yaml` into the expected path (`gateway/root/conf.yaml`) to configure the gateway.
-  - Adds a custom `run_gateway.sh` script as the container entrypoint.
-- **Port Exposure**: Exposes port `5055` (default port used by the gateway). Override as needed in .env.
-- **Startup Command**: Runs the gateway using the configuration file.
-
-This setup provides a self-contained, reproducible environment for securely running the Interactive Brokers REST API gateway in a containerized environment.
-
-### 📦 Interactive Brokers Routers Generator Docker Container [WIP]
-
-Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Endpoints Status](#endpoints-status)
-
-### 📦 IB MCP Server Docker Container
-This Docker container sets up and runs the **Interactive Brokers (IB) Model Context Protocol (MCP) Server**, which provides an interface for interacting with the IB API gateway.
-
-##### 🔧 What This Container Does
-
-- **Base Image**: Uses `ghcr.io/astral-sh/uv:python3.11-bookworm-slim` for a lightweight Python 3.11 environment with `uv`.
-- **Installs Dependencies**: Installs `curl` for system dependencies and uses `uv sync` to install Python dependencies from `pyproject.toml`.
-- **Configuration**: Copies the `pyproject.toml` and the entire `mcp_server` directory into the container. Sets `PYTHONPATH` to `/app` and `UV_CACHE_DIR` to `/tmp/uv-cache`.
-- **Port Exposure**: Exposes the port specified by the `MCP_SERVER_PORT` environment variable (e.g., `5002`).
-- **Startup Command**: Runs the FastAPI server using `uv run -- python /app/mcp_server/fastapi_server.py`.
-
-This setup provides a containerized environment for the MCP server, enabling it to communicate with the IB Client Portal Gateway.
-
 
 ## Docker Desktop Setup
 
@@ -185,7 +141,7 @@ In order to prevent the session from timing out, the endpoint /tickle should be 
 
 If the brokerage session has timed out but the session is still connected to the IBKR backend, the response to /auth/status returns ‘connected’:true and ‘authenticated’:false. Calling the /iserver/auth/ssodh/init endpoint will initialize a new brokerage session.
 
-### Future Work
+## Future Work
 - Automatically generate endpoints
   - Currently the [IB REST API (2.16.0) OpenAPI specification](https://api.ibkr.com/gw/api/v3/api-docs) fails validation, and the automated router generation feature is currently failing to generate routers. You can try to validate yourself here:
 
@@ -196,7 +152,7 @@ If the brokerage session has timed out but the session is still connected to the
   - Due to issues with the official OpenAPI specification and the IB team's current focus, automated router generation is not feasible at this time, and routers are being built manually.
 - Add OAuth
 
-### Endpoints Status
+## Endpoints Status
 
 Endpoints are currently manually built.
 
@@ -272,6 +228,50 @@ Endpoints are currently manually built.
 *   You are building a **reporting or analytics tool**.
 *   **Development speed and ease of use** are more important than raw performance or access to every single feature.
 *   You **cannot or do not want to run a dedicated TWS/Gateway instance**.
+
+## Architecture
+
+The project consists of 4 main components:
+
+*   **api_gateway:** Runs the Interactive Brokers Client Portal Gateway in a Docker container to enable secure access to the IB REST API.
+*   **ticker_service:** This service is responsible for maintaining the Interactive Brokers session by periodically calling the `/tickle` endpoint to prevent session timeouts, as detailed in the 'Reopen Session' section. This service runs in a Docker container.
+*   **routers_generator:** Based on official documentation it automatically creates FastAPI routers and saves them in the routers directory.
+*   **mcp_server:** MCP server built with FastMCP that interacts with API gateway by adding the routers previously generated This service also runs in a Docker container.
+
+
+### 📦 Interactive Brokers Client Portal Gateway Docker Container
+
+This Docker container sets up and runs the **Interactive Brokers (IB) Client Portal Gateway**, which is required for applications to connect via the IB REST API.
+
+##### 🔧 What This Container Does
+
+- **Base Image**: Uses `eclipse-temurin:21` (Java 21) for compatibility with the IB Gateway.
+- **Installs Dependencies**: Installs `unzip` for extracting the gateway archive.
+- **Downloads Gateway**: Fetches the latest version of the Client Portal Gateway from the official Interactive Brokers source and unzips it.
+- **Configuration**:
+  - Copies a custom `conf.yaml` into the expected path (`gateway/root/conf.yaml`) to configure the gateway.
+  - Adds a custom `run_gateway.sh` script as the container entrypoint.
+- **Port Exposure**: Exposes port `5055` (default port used by the gateway). Override as needed in .env.
+- **Startup Command**: Runs the gateway using the configuration file.
+
+This setup provides a self-contained, reproducible environment for securely running the Interactive Brokers REST API gateway in a containerized environment.
+
+### 📦 Interactive Brokers Routers Generator Docker Container [WIP]
+
+Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Endpoints Status](#endpoints-status)
+
+### 📦 IB MCP Server Docker Container
+This Docker container sets up and runs the **Interactive Brokers (IB) Model Context Protocol (MCP) Server**, which provides an interface for interacting with the IB API gateway.
+
+##### 🔧 What This Container Does
+
+- **Base Image**: Uses `ghcr.io/astral-sh/uv:python3.11-bookworm-slim` for a lightweight Python 3.11 environment with `uv`.
+- **Installs Dependencies**: Installs `curl` for system dependencies and uses `uv sync` to install Python dependencies from `pyproject.toml`.
+- **Configuration**: Copies the `pyproject.toml` and the entire `mcp_server` directory into the container. Sets `PYTHONPATH` to `/app` and `UV_CACHE_DIR` to `/tmp/uv-cache`.
+- **Port Exposure**: Exposes the port specified by the `MCP_SERVER_PORT` environment variable (e.g., `5002`).
+- **Startup Command**: Runs the FastAPI server using `uv run -- python /app/mcp_server/fastapi_server.py`.
+
+This setup provides a containerized environment for the MCP server, enabling it to communicate with the IB Client Portal Gateway.
 
 ## Limitations
 
