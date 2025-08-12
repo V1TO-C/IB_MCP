@@ -1,0 +1,5 @@
+{
+    "workbench.colorTheme": "Tomorrow Night Blue",
+    "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+    "chat.mcp.discovery.enabled": true
+}
