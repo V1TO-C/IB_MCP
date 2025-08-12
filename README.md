@@ -119,6 +119,19 @@ See a quick walkthrough in [YOUTUBE](https://www.youtube.com/watch?v=PyQz_kMQ9ek
         "workbench.colorTheme": "Tomorrow Night Blue"
     }
     ```
+    Alternatively, you can create a `.vscode/mcp.json` file at the root of your project with the following content:
+
+    ```json
+    {
+        "servers": {
+            "ib-mcp-server": {
+                "type": "http",
+                "url": "http://localhost:5002/mcp/"
+            }
+        },
+        "inputs": []
+    }
+    ```
     Check [Use MCP servers in VS Code (Preview)](https://code.visualstudio.com/docs/copilot/chat/mcp-servers) for further reference.
 
 4. Start the MCP in Copilot
