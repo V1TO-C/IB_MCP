@@ -1,11 +1,11 @@
 #!/bin/sh
-# This script contains the main logic for the Tickler service.
-# It continuously sends POST requests to a configured endpoint at a specified interval.
+# This script contains the tickler logic to keep the API Gateway session alive.
+# It continuously sends POST requests to the tickle endpoint at a specified interval.
 
 echo "[tickler] Tickler service started."
 
 # The 'while true' loop ensures the script runs indefinitely,
-# continuously sending requests to the API Gateway.
+# continuously sending requests to the tickle endpoint.
 while true; do
   NOW=$(date) # Get the current timestamp
   # Log the action, including the current time and the target URL.

@@ -28,51 +28,12 @@ services:
       retries: 5
       start_period: 20s
   
-  tickler:
-    build:
-      context: ./tickler
-      dockerfile: Dockerfile
-    container_name: api_tickler
-    image: ib_mcp_tickler:v0.0
-    depends_on:
-      api_gateway:
-        condition: service_healthy
-    networks:
-      - mcp_net
-    env_file:
-      - .env
-    environment:
-      - XX:XX
-      # TICKLE_INTERVAL: ${TICKLE_INTERVAL}
-      # TICKLE_BASE_URL: ${TICKLE_BASE_URL}
-      # TICKLE_ENDPOINT: ${TICKLE_ENDPOINT}
-    healthcheck:
-      # The script is copied into the container image via the Dockerfile.
-      test: [ "CMD-SHELL", "/usr/local/bin/healthcheck.sh" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-  
-  routers_generator:
-    build:
-      context: ./routers_generator
-    container_name: routers_generator
-    env_file:
-      - .env
-    environment:
-      - OPEN_API_SPEC_URL=${OPEN_API_SPEC_URL}
-      - OPENAPI_FILE_PATH=${OPENAPI_FILE_PATH}
-    volumes:
-      - ./routers_generator:/app/
-      - ./routers:/app/routers
-    restart: "no"
-
   mcp_server:
     container_name: mcp_server
     build:
       context: ./mcp_server
       dockerfile: Dockerfile
-    image: ib_mcp_api_gateway:v0.0
+    image: ib_mcp_mcp_server:v0.0
     ports:
       - "${MCP_SERVER_PORT}:${MCP_SERVER_PORT}"
     env_file:
@@ -89,8 +50,6 @@ services:
       # MCP_SERVER_LOG_LEVEL: ${MCP_SERVER_LOG_LEVEL}
     depends_on:
       api_gateway:
-        condition: service_started
-      tickler:
         condition: service_healthy
     networks:
       - mcp_net

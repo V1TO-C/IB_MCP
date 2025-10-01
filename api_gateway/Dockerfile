@@ -24,6 +24,13 @@ RUN chmod +x /app/run_gateway.sh
 COPY healthcheck.sh /usr/local/bin/healthcheck.sh
 RUN chmod +x /usr/local/bin/healthcheck.sh
 
+# Copy the tickler script and make it executable
+COPY tickler.sh /app/tickler.sh
+RUN chmod +x /app/tickler.sh
+
+# Install curl for the tickler script
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # By default, the gateway will listen on port 5000
 EXPOSE 5055
 
