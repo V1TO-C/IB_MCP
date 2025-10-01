@@ -244,12 +244,10 @@ Endpoints are currently manually built.
 
 ## Architecture
 
-The project consists of 4 main components:
+The project consists of 2 main Docker services:
 
-*   **api_gateway:** Runs the Interactive Brokers Client Portal Gateway in a Docker container to enable secure access to the IB REST API.
-*   **ticker_service:** This service is responsible for maintaining the Interactive Brokers session by periodically calling the `/tickle` endpoint to prevent session timeouts, as detailed in the 'Reopen Session' section. This service runs in a Docker container.
-*   **routers_generator:** Based on official documentation it automatically creates FastAPI routers and saves them in the routers directory.
-*   **mcp_server:** MCP server built with FastMCP that interacts with API gateway by adding the routers previously generated This service also runs in a Docker container.
+*   **api_gateway:** Runs the Interactive Brokers Client Portal Gateway to enable secure access to the IB REST API. Includes an integrated tickler service that automatically maintains the IB session by periodically calling the `/tickle` endpoint to prevent timeouts.
+*   **mcp_server:** FastMCP server built with FastAPI that provides the Model Context Protocol interface. Contains manually-developed routers for IB API endpoints located in `mcp_server/routers/`.
 
 
 ### 📦 Interactive Brokers Client Portal Gateway Docker Container
@@ -259,19 +257,16 @@ This Docker container sets up and runs the **Interactive Brokers (IB) Client Por
 ##### 🔧 What This Container Does
 
 - **Base Image**: Uses `eclipse-temurin:21` (Java 21) for compatibility with the IB Gateway.
-- **Installs Dependencies**: Installs `unzip` for extracting the gateway archive.
+- **Installs Dependencies**: Installs `unzip` for extracting the gateway archive, and `curl` for the tickler service.
 - **Downloads Gateway**: Fetches the latest version of the Client Portal Gateway from the official Interactive Brokers source and unzips it.
 - **Configuration**:
   - Copies a custom `conf.yaml` into the expected path (`gateway/root/conf.yaml`) to configure the gateway.
-  - Adds a custom `run_gateway.sh` script as the container entrypoint.
+  - Includes a `run_gateway.sh` script that starts the gateway and launches the integrated tickler service.
+  - The tickler automatically calls the `/tickle` endpoint every 60 seconds to maintain the session.
 - **Port Exposure**: Exposes port `5055` (default port used by the gateway). Override as needed in .env.
-- **Startup Command**: Runs the gateway using the configuration file.
+- **Startup Command**: Runs the gateway and tickler service using the configuration file.
 
-This setup provides a self-contained, reproducible environment for securely running the Interactive Brokers REST API gateway in a containerized environment.
-
-### 📦 Interactive Brokers Routers Generator Docker Container [WIP]
-
-Routers are currently manually developed as the official Open Api Json file fails validations. See [Future Work](#future-work) and [Endpoints Status](#endpoints-status)
+This setup provides a self-contained, reproducible environment for securely running the Interactive Brokers REST API gateway with automatic session management in a containerized environment.
 
 ### 📦 IB MCP Server Docker Container
 This Docker container sets up and runs the **Interactive Brokers (IB) Model Context Protocol (MCP) Server**, which provides an interface for interacting with the IB API gateway.
@@ -280,11 +275,14 @@ This Docker container sets up and runs the **Interactive Brokers (IB) Model Cont
 
 - **Base Image**: Uses `ghcr.io/astral-sh/uv:python3.11-bookworm-slim` for a lightweight Python 3.11 environment with `uv`.
 - **Installs Dependencies**: Installs `curl` for system dependencies and uses `uv sync` to install Python dependencies from `pyproject.toml`.
-- **Configuration**: Copies the `pyproject.toml` and the entire `mcp_server` directory into the container. Sets `PYTHONPATH` to `/app` and `UV_CACHE_DIR` to `/tmp/uv-cache`.
+- **Configuration**:
+  - Copies the `pyproject.toml` and the entire `mcp_server` directory (including `mcp_server/routers/`) into the container.
+  - Sets `PYTHONPATH` to `/app` and `UV_CACHE_DIR` to `/tmp/uv-cache`.
+  - Routers are manually developed and located in `mcp_server/routers/` (not auto-generated due to OpenAPI spec validation issues).
 - **Port Exposure**: Exposes the port specified by the `MCP_SERVER_PORT` environment variable (e.g., `5002`).
 - **Startup Command**: Runs the FastAPI server using `uv run -- python /app/mcp_server/fastapi_server.py`.
 
-This setup provides a containerized environment for the MCP server, enabling it to communicate with the IB Client Portal Gateway.
+This setup provides a containerized environment for the MCP server with integrated routers, enabling it to communicate with the IB Client Portal Gateway via the Model Context Protocol.
 
 ## Limitations
 
