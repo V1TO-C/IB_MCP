@@ -17,9 +17,6 @@ COPY pyproject.toml ./
 # Copy the entire mcp_server directory
 COPY . /app/mcp_server
 
-# Create routers directory (will be mounted)
-RUN mkdir -p /app/routers
-
 # Debug: List files to verify server.py is copied
 RUN ls -la /app/mcp_server/
 

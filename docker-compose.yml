@@ -39,7 +39,7 @@ services:
     env_file:
       - .env
     environment:
-      - ROUTERS_PATH=/app/routers
+      - ROUTERS_PATH=/app/mcp_server/routers
       # GATEWAY_BASE_URL: ${GATEWAY_INTERNAL_BASE_URL}
       # GATEWAY_PORT: ${GATEWAY_PORT}
       # GATEWAY_ENDPOINT: ${GATEWAY_ENDPOINT}
@@ -56,7 +56,6 @@ services:
     volumes:
       # Mount local directory for development
       - ./mcp_server:/app/mcp_server
-      - ./routers:/app/routers:ro
     stdin_open: true
     tty: true
     restart: unless-stopped
