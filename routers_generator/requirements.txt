@@ -1,4 +1,0 @@
-fastapi-code-generator
-httpx
-openapi-spec-validator
-ruamel.yaml
