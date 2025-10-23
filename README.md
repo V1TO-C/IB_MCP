@@ -1,4 +1,4 @@
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/rcontesti-ib-mcp-badge.png)](https://mseep.ai/app/rcontesti-ib-mcp)
+
 
 <div align="center">
 
@@ -6,6 +6,8 @@
 
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![MseeP.ai Security Assessment Badge](https://mseep.ai/badge.svg)](https://mseep.ai/app/rcontesti-ib-mcp)
+
 
 ![sample](./assets/sample_usecase.gif)
 
