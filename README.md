@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/rcontesti-ib-mcp-badge.png)](https://mseep.ai/app/rcontesti-ib-mcp)
+
 <div align="center">
 
 <img src="assets/banner.png" alt="Interactive Brokers Web API – Model Context Protocol" />
