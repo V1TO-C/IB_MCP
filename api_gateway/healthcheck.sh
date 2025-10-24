@@ -1,34 +1,32 @@
 #!/bin/sh
 # This script performs a health check for the API Gateway service.
-# It checks if the API Gateway is reachable and returns a valid JSON response.
+# It checks if the API Gateway is reachable and responding.
 
-# Environment variables like GATEWAY_INTERNAL_BASE_URL, GATEWAY_PORT, and GATEWAY_TEST_ENDPOINT
-# are automatically available in the container's healthcheck execution environment.
-URL="${GATEWAY_INTERNAL_BASE_URL}:${GATEWAY_PORT}${GATEWAY_TEST_ENDPOINT}"
+# For healthcheck, we need to check the LOCAL gateway running in THIS container
+# Before login, most endpoints return "Access Denied", so we just verify the service responds
+URL="https://localhost:${GATEWAY_PORT}${GATEWAY_TEST_ENDPOINT}"
 
 echo "Attempting to check API Gateway health at: $URL"
 
-# Use curl to get the HTTP status code and save the response body to a temporary file.
-# -s: Silent mode (don't show progress meter or error messages)
-# -k: Allow insecure server connections when using SSL (useful for local development with self-signed certs)
-# -w "%{http_code}": Output only the HTTP status code
-# -o /tmp/api_response.json: Write the response body to this file
-STATUS=$(curl -sk -w "%{http_code}" -o /tmp/api_response.json "$URL")
+# Use curl to check if the gateway is responding
+# -s: Silent mode
+# -k: Allow insecure server connections (self-signed certs)
+# -f: Fail silently on HTTP errors (will make curl return non-zero for 4xx/5xx)
+# -m 5: Maximum time allowed for the transfer (5 seconds timeout)
+# We don't use -f because we expect 401/403 before login
 
-# Check if the HTTP status code is not 401 (Unauthorized).
-# The API Gateway might return 401 if no authentication token is provided,
-# but a successful health check should indicate the service is up and responding.
-if [ "$STATUS" -ne 401 ]; then
-  # Check if the response body contains a JSON object (indicated by a '{' character).
-  # This is a basic check to ensure the response is not empty or malformed.
-  if grep -q "{" /tmp/api_response.json; then
-    echo "API Gateway healthcheck successful: HTTP status $STATUS, response contains JSON."
-    exit 0 # Exit with 0 for success
-  else
-    echo "API Gateway healthcheck failed: Response does not contain a JSON object."
-    exit 1 # Exit with 1 for failure
+RESPONSE=$(curl -sk -m 5 -w "%{http_code}" -o /dev/null "$URL" 2>&1)
+CURL_EXIT=$?
+
+# If curl succeeded in connecting (exit code 0) or got a response (even error)
+# then the gateway is running. Common codes: 200, 401, 403, 404
+if [ $CURL_EXIT -eq 0 ] || [ -n "$RESPONSE" ]; then
+  # Check if we got an HTTP response code (any response means gateway is running)
+  if [ "$RESPONSE" -ge 100 ] 2>/dev/null && [ "$RESPONSE" -lt 600 ] 2>/dev/null; then
+    echo "API Gateway healthcheck successful: HTTP status $RESPONSE (service is responding)"
+    exit 0
   fi
-else
-  echo "API Gateway healthcheck failed: Received HTTP status $STATUS (expected non-401)."
-  exit 1 # Exit with 1 for failure
 fi
+
+echo "API Gateway healthcheck failed: curl exit code $CURL_EXIT, HTTP status: $RESPONSE"
+exit 1
