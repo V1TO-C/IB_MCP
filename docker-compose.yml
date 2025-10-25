@@ -15,7 +15,7 @@ services:
       - GATEWAY_ENDPOINT=${GATEWAY_ENDPOINT}
       - GATEWAY_TEST_ENDPOINT=${GATEWAY_TEST_ENDPOINT}
     networks:
-      - mcp_net
+      - ib_mcp_net
     volumes:
       - ./api_gateway/conf.yaml:/app/api_gateway/root/conf.yaml # Mount the config file
     healthcheck:
@@ -51,7 +51,7 @@ services:
       api_gateway:
         condition: service_healthy
     networks:
-      - mcp_net
+      - ib_mcp_net
     volumes:
       # Mount local directory for development
       - ./mcp_server:/app/mcp_server
@@ -60,6 +60,6 @@ services:
     restart: unless-stopped
 
 networks:
-  mcp_net:
+  ib_mcp_net:
     driver: bridge
 
