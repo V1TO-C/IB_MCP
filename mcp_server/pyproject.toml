@@ -8,12 +8,12 @@ authors = [
 
 requires-python = ">=3.11"
 dependencies = [
-    "fastmcp==2.10.3",
+    "fastmcp==2.12.5",
     "fastapi==0.116.0",
     "uvicorn==0.35.0",
     "httpx==0.28.1",
     "urllib3==2.5.0",
-    "mcp==1.10.1",
+    "mcp>=1.12.4,<1.17.0",
     "asyncio==3.4.3",
     "aiohttp==3.12.13",
 ]
