@@ -84,7 +84,8 @@ async def get_alerts(
     "/iserver/account/{accountId}/alert",
     tags=["Alerts"],
     summary="Create or Modify Alert",
-    description="Create a new alert or modify an existing one. To modify, include the `orderId` in the request body."
+    description="Create a new alert or modify an existing one. To modify, include the `orderId` in the request body.",
+    response_model=dict
 )
 async def create_or_modify_alert(
     accountId: str = Path(..., description="The account ID."),
@@ -97,7 +98,7 @@ async def create_or_modify_alert(
         try:
             response = await client.post(
                 f"{BASE_URL}/iserver/account/{accountId}/alert",
-                json=body.dict(exclude_none=True),
+                json=body.model_dump(exclude_none=True),
                 timeout=10
             )
             response.raise_for_status()
