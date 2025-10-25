@@ -39,7 +39,7 @@ ENV MCP_SERVER_BASE_URL=""
 ENV MCP_SERVER_INTERNAL_BASE_URL=""
 
 # Expose the port (if needed for health checks)
-EXPOSE ${MCP_SERVER_PORT}
+EXPOSE 5002
 
 # Run the server with uv (specify python explicitly)
 CMD ["uv", "run", "--", "python", "/app/mcp_server/fastapi_server.py"]
