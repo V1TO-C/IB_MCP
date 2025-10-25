@@ -24,6 +24,22 @@ class AlertRequest(BaseModel):
     """
     Request model for creating or modifying an alert.
     """
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "alertName": "Price Alert for IBM",
+            "alertMessage": "IBM crossed 175",
+            "alertActive": 1,
+            "conditions": [{
+                "type": 3,
+                "conidex": "265598@SMART",
+                "operator": ">=",
+                "value": "175",
+                "logicBind": "and"
+            }],
+            "tif": "GTC"
+        }
+    })
+    
     orderId: Optional[int] = Field(None, description="The order ID. Required for modifications, omit for new alerts.")
     alertName: str = Field(..., description="The name of the alert.")
     alertMessage: str = Field(..., description="The message to be sent when the alert is triggered.")
@@ -32,23 +48,6 @@ class AlertRequest(BaseModel):
     tif: str = Field("GTC", description="The time in force for the alert, e.g., 'GTC' for Good-Til-Cancelled.")
     outsideRth: bool = Field(False, description="Set to true to allow the alert to trigger outside regular trading hours.")
     iTtif: bool = Field(False, description="Set to true to allow the alert to trigger during extended trading hours.")
-
-    class ConfigDict:
-        json_schema_extra = {
-            "example": {
-                "alertName": "Price Alert for IBM",
-                "alertMessage": "IBM crossed 175",
-                "alertActive": 1,
-                "conditions": [{
-                    "type": 3,
-                    "conidex": "265598@SMART",
-                    "operator": ">=",
-                    "value": "175",
-                    "logicBind": "and"
-                }],
-                "tif": "GTC"
-            }
-        }
 
 class AlertActivationRequest(BaseModel):
     """Request model for activating or deactivating an alert."""
