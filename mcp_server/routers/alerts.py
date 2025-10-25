@@ -24,6 +24,15 @@ class AlertRequest(BaseModel):
     """
     Request model for creating or modifying an alert.
     """
+    orderId: Optional[int] = Field(None, description="The order ID. Required for modifications, omit for new alerts.")
+    alertName: str = Field(..., description="The name of the alert.")
+    alertMessage: str = Field(..., description="The message to be sent when the alert is triggered.")
+    alertActive: int = Field(..., description="Set to 1 to make the alert active, 0 to make it inactive.")
+    conditions: List[ConditionModel] = Field(..., description="A list of conditions that trigger the alert.", min_length=1)
+    tif: str = Field("GTC", description="The time in force for the alert, e.g., 'GTC' for Good-Til-Cancelled.")
+    outsideRth: bool = Field(False, description="Set to true to allow the alert to trigger outside regular trading hours.")
+    iTtif: bool = Field(False, description="Set to true to allow the alert to trigger during extended trading hours.")
+    
     model_config = ConfigDict(json_schema_extra={
         "example": {
             "alertName": "Price Alert for IBM",
@@ -39,15 +48,6 @@ class AlertRequest(BaseModel):
             "tif": "GTC"
         }
     })
-    
-    orderId: Optional[int] = Field(None, description="The order ID. Required for modifications, omit for new alerts.")
-    alertName: str = Field(..., description="The name of the alert.")
-    alertMessage: str = Field(..., description="The message to be sent when the alert is triggered.")
-    alertActive: int = Field(..., description="Set to 1 to make the alert active, 0 to make it inactive.")
-    conditions: List[ConditionModel] = Field(..., description="A list of conditions that trigger the alert.")
-    tif: str = Field("GTC", description="The time in force for the alert, e.g., 'GTC' for Good-Til-Cancelled.")
-    outsideRth: bool = Field(False, description="Set to true to allow the alert to trigger outside regular trading hours.")
-    iTtif: bool = Field(False, description="Set to true to allow the alert to trigger during extended trading hours.")
 
 class AlertActivationRequest(BaseModel):
     """Request model for activating or deactivating an alert."""
