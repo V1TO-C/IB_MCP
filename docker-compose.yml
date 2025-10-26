@@ -14,6 +14,7 @@ services:
       - GATEWAY_PORT=${GATEWAY_PORT}
       - GATEWAY_ENDPOINT=${GATEWAY_ENDPOINT}
       - GATEWAY_TEST_ENDPOINT=${GATEWAY_TEST_ENDPOINT}
+      - GATEWAY_SERVER_BASE_URL=${GATEWAY_SERVER_BASE_URL}
     networks:
       - ib_mcp_net
     volumes:
@@ -26,6 +27,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+    restart: unless-stopped
   
   mcp_server:
     container_name: mcp_server
