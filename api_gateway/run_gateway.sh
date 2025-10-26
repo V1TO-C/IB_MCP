@@ -6,7 +6,17 @@ sh bin/run.sh root/conf.yaml &
 
 # Wait for the API Gateway to become healthy before starting the tickler
 echo "Waiting for API Gateway to become healthy..."
-while ! /usr/local/bin/healthcheck.sh; do
+while true; do
+  echo "========================================"
+  echo "Running healthcheck at $(date)..."
+  echo "========================================"
+  /usr/local/bin/healthcheck.sh
+  HEALTH_EXIT=$?
+  echo "Healthcheck exit code: $HEALTH_EXIT"
+  if [ $HEALTH_EXIT -eq 0 ]; then
+    echo "Healthcheck PASSED!"
+    break
+  fi
   echo "API Gateway not ready yet, waiting..."
   sleep 2
 done
