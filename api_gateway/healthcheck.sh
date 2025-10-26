@@ -4,7 +4,7 @@
 
 # For healthcheck, we need to check the LOCAL gateway running in THIS container
 # Before login, most endpoints return "Access Denied", so we just verify the service responds
-URL="https://localhost:${GATEWAY_PORT}${GATEWAY_TEST_ENDPOINT}"
+URL="${GATEWAY_SERVER_BASE_URL}:${GATEWAY_PORT}${GATEWAY_TEST_ENDPOINT}"
 
 echo "Attempting to check API Gateway health at: $URL"
 
