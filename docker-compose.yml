@@ -15,6 +15,7 @@ services:
       - GATEWAY_ENDPOINT=${GATEWAY_ENDPOINT}
       - GATEWAY_TEST_ENDPOINT=${GATEWAY_TEST_ENDPOINT}
       - GATEWAY_SERVER_BASE_URL=${GATEWAY_SERVER_BASE_URL}
+      - TICKLE_BASE_URL=${TICKLE_BASE_URL}
     networks:
       - ib_mcp_net
     volumes:
