@@ -4,7 +4,7 @@ services:
     build:
       context: ./api_gateway
       dockerfile: Dockerfile
-    image: ib_mcp_api_gateway:v0.1
+    image: ib_mcp_api_gateway:v0.2
     ports:
       - "${GATEWAY_PORT}:${GATEWAY_PORT}"
     env_file:
